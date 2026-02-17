@@ -13,27 +13,31 @@ import LandServices from './pages/LandServices';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
-import { WifiOff, ShieldAlert } from 'lucide-react';
+import { WifiOff, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { syncDataToCache } from './lib/cache';
-import { initStorage, getCurrentUser, logoutUser, getPortalData, updatePortalData } from './lib/store';
+import { initStorage, getCurrentUser, logoutUser, getPortalData, updatePortalData, subscribeToData } from './lib/store';
 
 const App: React.FC = () => {
   const [activePage, setActivePage] = useState('home');
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [user, setUser] = useState<any>(null);
   const [portalData, setPortalData] = useState<any>(null);
-
-  const loadPortalConfig = () => {
-    const data = getPortalData();
-    if (data) {
-      setPortalData(data);
-    }
-  };
+  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     initStorage();
     setUser(getCurrentUser());
-    loadPortalConfig();
+    
+    // Initial data load
+    const initialData = getPortalData();
+    setPortalData(initialData);
+
+    // Subscribe to real-time updates from store
+    const unsubscribe = subscribeToData((newData) => {
+      setIsSyncing(true);
+      setPortalData(newData);
+      setTimeout(() => setIsSyncing(false), 1000);
+    });
 
     const handleOnline = () => {
       setIsOnline(true);
@@ -42,7 +46,6 @@ const App: React.FC = () => {
     const handleOffline = () => setIsOnline(false);
     
     const handleStorageChange = () => {
-      loadPortalConfig();
       setUser(getCurrentUser());
     };
 
@@ -50,16 +53,27 @@ const App: React.FC = () => {
     window.addEventListener('offline', handleOffline);
     window.addEventListener('storage', handleStorageChange);
 
+    // Simulated "Server Check" for real-time cloud updates
+    // In a real app, this would be a WebSocket or Server-Sent Events
+    const syncInterval = setInterval(() => {
+      const dataFromStore = getPortalData();
+      if (JSON.stringify(dataFromStore) !== JSON.stringify(portalData)) {
+        setPortalData(dataFromStore);
+      }
+    }, 5000);
+
     if (navigator.onLine) {
       syncDataToCache();
     }
 
     return () => {
+      unsubscribe();
+      clearInterval(syncInterval);
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [portalData]);
 
   const handleLogout = () => {
     logoutUser();
@@ -73,7 +87,6 @@ const App: React.FC = () => {
 
   const handleDataUpdate = (newData: any) => {
     updatePortalData(newData);
-    setPortalData(newData);
   };
 
   const handleBack = () => setActivePage('home');
@@ -81,7 +94,6 @@ const App: React.FC = () => {
   const renderPage = () => {
     if (!portalData) return null;
 
-    // Auth screens
     if (activePage === 'login' || activePage === 'signup') {
       return (
         <div className="py-10">
@@ -95,7 +107,6 @@ const App: React.FC = () => {
       );
     }
 
-    // Profile Screen
     if (activePage === 'profile') {
       if (!user) {
         setActivePage('login');
@@ -104,7 +115,6 @@ const App: React.FC = () => {
       return <Profile user={user} onUpdate={handleUserUpdate} onLogout={handleLogout} onBack={handleBack} />;
     }
 
-    // Admin protected screen
     if (activePage === 'admin') {
       if (user?.role !== 'admin') {
         return (
@@ -129,12 +139,27 @@ const App: React.FC = () => {
           onBack={handleBack}
         />
       );
-      case 'health': return <Health onBack={handleBack} />;
-      case 'directory': return <Directory onBack={handleBack} />;
+      case 'health': return (
+        <Health 
+          facilities={portalData.healthFacilities || []} 
+          onBack={handleBack} 
+        />
+      );
+      case 'directory': return (
+        <Directory 
+          officials={portalData.districtOfficials || []} 
+          onBack={handleBack} 
+        />
+      );
       case 'land': return <LandServices onBack={handleBack} />;
       case 'tourism': return <TouristPlaces onBack={handleBack} />;
       case 'complaint': return <ComplaintBox onBack={handleBack} />;
-      case 'education': return <Education onBack={handleBack} />;
+      case 'education': return (
+        <Education 
+          institutions={portalData.educationData || []} 
+          onBack={handleBack} 
+        />
+      );
       case 'eapps': return <EApplications onBack={handleBack} />;
       default: return <Home onNavigate={setActivePage} />;
     }
@@ -146,6 +171,13 @@ const App: React.FC = () => {
         <div className="bg-amber-500 text-white px-4 py-2 text-center text-sm font-bold flex items-center justify-center gap-2 animate-in slide-in-from-top z-[60]">
           <WifiOff className="w-4 h-4" />
           <span>আপনি বর্তমানে অফলাইন আছেন। সংরক্ষিত তথ্য প্রদর্শিত হচ্ছে।</span>
+        </div>
+      )}
+
+      {isSyncing && (
+        <div className="fixed top-20 right-4 z-[70] bg-white border border-green-200 px-4 py-2 rounded-full shadow-lg flex items-center gap-2 animate-in slide-in-from-right fade-in duration-300">
+           <RefreshCcw className="w-4 h-4 text-green-600 animate-spin" />
+           <span className="text-xs font-bold text-green-800">তথ্য আপডেট হচ্ছে...</span>
         </div>
       )}
 

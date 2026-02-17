@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { GraduationCap, MapPin, Phone, Search, Building, BookOpen, School, ArrowLeft } from 'lucide-react';
-import { getPortalData } from '../lib/store';
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface EducationProps {
+  institutions: any[];
   onBack: () => void;
 }
 
-const Education: React.FC<EducationProps> = ({ onBack }) => {
-  const [institutions, setInstitutions] = useState<any[]>([]);
+const Education: React.FC<EducationProps> = ({ institutions, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const data = getPortalData();
-    if (data && data.educationData) {
-      setInstitutions(data.educationData);
-    }
-  }, []);
-
-  const filtered = institutions.filter(i => 
+  const filtered = (institutions || []).filter(i => 
     i.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     i.location.toLowerCase().includes(searchQuery.toLowerCase())
   );

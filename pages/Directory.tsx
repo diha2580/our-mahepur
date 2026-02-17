@@ -1,13 +1,13 @@
 import React from 'react';
 import { Building2, Mail, Phone, ExternalLink, UserCircle2, ArrowLeft } from 'lucide-react';
-import { districtOfficials } from '../data';
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface DirectoryProps {
+  officials: any[];
   onBack: () => void;
 }
 
-const Directory: React.FC<DirectoryProps> = ({ onBack }) => {
+const Directory: React.FC<DirectoryProps> = ({ officials, onBack }) => {
   return (
     <div className="animate-in slide-in-from-top duration-500">
       <button 
@@ -42,7 +42,7 @@ const Directory: React.FC<DirectoryProps> = ({ onBack }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {districtOfficials.map((official) => (
+            {(officials || []).map((official: any) => (
               <tr key={official.id} className="hover:bg-blue-50/30 transition-colors group">
                 <td className="px-6 py-5">
                   <div className="flex items-center space-x-3">

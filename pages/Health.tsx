@@ -1,23 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { HeartPulse, MapPin, Phone, Hospital as HospIcon, UserRound, Search, ChevronRight, X, ArrowLeft } from 'lucide-react';
-import { getPortalData } from '../lib/store';
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface HealthProps {
+  facilities: any[];
   onBack: () => void;
 }
 
-const Health: React.FC<HealthProps> = ({ onBack }) => {
+const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
   const [filter, setFilter] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [facilities, setFacilities] = useState<any[]>([]);
 
-  useEffect(() => {
-    const data = getPortalData();
-    if (data) setFacilities(data.healthFacilities || []);
-  }, []);
-
-  const filteredHospitals = facilities.filter(h => {
+  const filteredHospitals = (facilities || []).filter(h => {
     const matchesFilter = filter === 'All' || h.type === filter;
     const matchesSearch = 
       h.name.toLowerCase().includes(searchQuery.toLowerCase()) || 

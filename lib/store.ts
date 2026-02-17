@@ -6,13 +6,33 @@ const CURRENT_USER_KEY = 'portal_current_user';
 const COMPLAINTS_KEY = 'portal_complaints_v1';
 const ADMIN_PWD_KEY = 'portal_admin_password';
 
+// Observer Pattern for Real-time Updates
+type Listener = (data: any) => void;
+const listeners: Set<Listener> = new Set();
+const broadcastChannel = new BroadcastChannel('portal_sync_channel');
+
+export const subscribeToData = (listener: Listener) => {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+};
+
+const notifyListeners = (newData: any) => {
+  listeners.forEach(l => l(newData));
+};
+
+// Handle cross-tab/cross-process updates via BroadcastChannel
+broadcastChannel.onmessage = (event) => {
+  if (event.data.type === 'DATA_UPDATE') {
+    notifyListeners(event.data.payload);
+  }
+};
+
 export const getAdminPassword = () => {
   return localStorage.getItem(ADMIN_PWD_KEY) || 'Nahian685372@@';
 };
 
 export const updateAdminPassword = (newPassword: string) => {
   localStorage.setItem(ADMIN_PWD_KEY, newPassword);
-  // Also update the password in the users list for the admin user
   const users = getUsers();
   const adminIndex = users.findIndex((u: any) => u.email === ADMIN_EMAIL);
   if (adminIndex !== -1) {
@@ -21,7 +41,6 @@ export const updateAdminPassword = (newPassword: string) => {
   }
 };
 
-// Initialize data if not exists
 export const initStorage = () => {
   try {
     if (!localStorage.getItem(DATA_KEY)) {
@@ -37,7 +56,6 @@ export const initStorage = () => {
       }));
     }
     
-    // Always check/update admin user on init
     const users = getUsers();
     const adminIndex = users.findIndex((u: any) => u.email === ADMIN_EMAIL);
     
@@ -54,7 +72,6 @@ export const initStorage = () => {
     if (adminIndex === -1) {
       users.push(adminUser);
     } else {
-      // Ensure password in users list matches current stored admin password
       users[adminIndex].password = getAdminPassword();
     }
     
@@ -76,6 +93,11 @@ export const getPortalData = () => {
 export const updatePortalData = (newData: any) => {
   try {
     localStorage.setItem(DATA_KEY, JSON.stringify(newData));
+    // Notify same-tab listeners
+    notifyListeners(newData);
+    // Notify other-tab listeners
+    broadcastChannel.postMessage({ type: 'DATA_UPDATE', payload: newData });
+    // Global storage event for legacy support
     window.dispatchEvent(new Event('storage'));
   } catch (e) {
     console.error("Failed to update portal data", e);
@@ -127,12 +149,7 @@ export const saveUser = (user: any) => {
   const users = getUsers();
   const newUser = { ...user, id: Date.now().toString(), role: user.email === ADMIN_EMAIL ? 'admin' : 'user' };
   users.push(newUser);
-  try {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  } catch (e) {
-    console.error("Quota exceeded while saving user", e);
-    throw e;
-  }
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
 };
 
 export const updateUser = (updatedUser: any) => {
@@ -140,14 +157,9 @@ export const updateUser = (updatedUser: any) => {
   const index = users.findIndex((u: any) => u.id === updatedUser.id);
   if (index !== -1) {
     users[index] = updatedUser;
-    try {
-      localStorage.setItem(USERS_KEY, JSON.stringify(users));
-      localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
-      return updatedUser;
-    } catch (e) {
-      console.error("Quota exceeded while updating user", e);
-      throw e;
-    }
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
+    return updatedUser;
   }
   return null;
 };
