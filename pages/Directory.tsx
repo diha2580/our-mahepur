@@ -1,12 +1,25 @@
-
 import React from 'react';
-import { Building2, Mail, Phone, ExternalLink, UserCircle2 } from 'lucide-react';
+import { Building2, Mail, Phone, ExternalLink, UserCircle2, ArrowLeft } from 'lucide-react';
 import { districtOfficials } from '../data';
 import { formatPhoneForDialer } from '../lib/utils';
 
-const Directory: React.FC = () => {
+interface DirectoryProps {
+  onBack: () => void;
+}
+
+const Directory: React.FC<DirectoryProps> = ({ onBack }) => {
   return (
     <div className="animate-in slide-in-from-top duration-500">
+      <button 
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold transition-colors group"
+      >
+        <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-blue-50 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+        </div>
+        ফিরে যান
+      </button>
+
       <div className="mb-8 border-b border-gray-100 pb-6 flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold text-gray-900">জেলা ডিরেক্টরি</h2>

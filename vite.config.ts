@@ -4,15 +4,16 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Specifically define process.env.API_KEY to prevent 'process is not defined' errors
-    // while keeping the bundle clean and compatible with the browser.
+    // This allows the use of process.env.API_KEY in the frontend code
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY || '')
   },
   server: {
     port: 3000,
+    host: true
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
+    minify: 'esbuild'
   }
 });

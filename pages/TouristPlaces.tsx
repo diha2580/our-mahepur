@@ -1,11 +1,24 @@
-
 import React from 'react';
-import { MapPin, Info, ArrowRight } from 'lucide-react';
+import { MapPin, Info, ArrowRight, ArrowLeft } from 'lucide-react';
 import { touristSpots } from '../data';
 
-const TouristPlaces: React.FC = () => {
+interface TouristPlacesProps {
+  onBack: () => void;
+}
+
+const TouristPlaces: React.FC<TouristPlacesProps> = ({ onBack }) => {
   return (
     <div className="animate-in fade-in slide-in-from-left duration-500">
+      <button 
+        onClick={onBack}
+        className="mb-6 flex items-center gap-2 text-gray-500 hover:text-orange-600 font-bold transition-colors group"
+      >
+        <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-orange-50 transition-colors">
+          <ArrowLeft className="w-4 h-4" />
+        </div>
+        ফিরে যান
+      </button>
+
       <div className="mb-10 text-center max-w-2xl mx-auto">
         <h2 className="text-4xl font-extrabold text-gray-900 mb-4">দর্শনীয় স্থান ও পর্যটন</h2>
         <p className="text-gray-500">আপনার জেলার সৌন্দর্য উপভোগ করতে এই স্থানগুলো ভিজিট করুন।</p>
@@ -26,7 +39,6 @@ const TouristPlaces: React.FC = () => {
             <div className="p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors">{spot.name}</h3>
               <p className="text-sm text-gray-500 line-clamp-2 mb-6">{spot.description}</p>
-              
               <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                 <button className="text-orange-600 text-sm font-bold flex items-center hover:translate-x-1 transition-transform">
                   বিস্তারিত দেখুন <ArrowRight className="w-4 h-4 ml-1" />

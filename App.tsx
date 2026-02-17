@@ -76,6 +76,8 @@ const App: React.FC = () => {
     setPortalData(newData);
   };
 
+  const handleBack = () => setActivePage('home');
+
   const renderPage = () => {
     if (!portalData) return null;
 
@@ -87,6 +89,7 @@ const App: React.FC = () => {
             mode={activePage as any} 
             onSuccess={(u) => {setUser(u); setActivePage('home');}} 
             onSwitch={() => setActivePage(activePage === 'login' ? 'signup' : 'login')} 
+            onBack={handleBack}
           />
         </div>
       );
@@ -98,7 +101,7 @@ const App: React.FC = () => {
         setActivePage('login');
         return null;
       }
-      return <Profile user={user} onUpdate={handleUserUpdate} onLogout={handleLogout} />;
+      return <Profile user={user} onUpdate={handleUserUpdate} onLogout={handleLogout} onBack={handleBack} />;
     }
 
     // Admin protected screen
@@ -113,7 +116,7 @@ const App: React.FC = () => {
           </div>
         );
       }
-      return <AdminPanel />;
+      return <AdminPanel onBack={handleBack} />;
     }
 
     switch (activePage) {
@@ -123,15 +126,16 @@ const App: React.FC = () => {
           user={user} 
           contacts={portalData.emergencyContacts || []} 
           onUpdate={(newContacts) => handleDataUpdate({ ...portalData, emergencyContacts: newContacts })} 
+          onBack={handleBack}
         />
       );
-      case 'health': return <Health />;
-      case 'directory': return <Directory />;
-      case 'land': return <LandServices />;
-      case 'tourism': return <TouristPlaces />;
-      case 'complaint': return <ComplaintBox />;
-      case 'education': return <Education />;
-      case 'eapps': return <EApplications />;
+      case 'health': return <Health onBack={handleBack} />;
+      case 'directory': return <Directory onBack={handleBack} />;
+      case 'land': return <LandServices onBack={handleBack} />;
+      case 'tourism': return <TouristPlaces onBack={handleBack} />;
+      case 'complaint': return <ComplaintBox onBack={handleBack} />;
+      case 'education': return <Education onBack={handleBack} />;
+      case 'eapps': return <EApplications onBack={handleBack} />;
       default: return <Home onNavigate={setActivePage} />;
     }
   };
