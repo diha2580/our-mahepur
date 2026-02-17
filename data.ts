@@ -1,4 +1,3 @@
-
 import { EmergencyContact, Official, Hospital, TouristPlace } from './types';
 
 export const ADMIN_EMAIL = 'nahiannafiz07@gmail.com';
@@ -8,6 +7,7 @@ export const initialNavItems = [
   { id: 'emergency', label: 'জরুরি সেবা', icon: 'PhoneCall' },
   { id: 'health', label: 'স্বাস্থ্য', icon: 'HeartPulse' },
   { id: 'directory', label: 'ডিরেক্টরি', icon: 'Building2' },
+  { id: 'land', label: 'ভূমি সেবা', icon: 'Landmark' },
   { id: 'education', label: 'শিক্ষা', icon: 'GraduationCap' },
   { id: 'tourism', label: 'পর্যটন', icon: 'MapPin' },
   { id: 'complaint', label: 'অভিযোগ', icon: 'MessageSquare' },
@@ -50,4 +50,12 @@ export const eApplications = [
   { id: '2', title: 'ট্রেড লাইসেন্স আবেদন', link: 'https://example.gov.bd/trade' },
   { id: '3', title: 'ওয়ারিশ সনদ আবেদন', link: 'https://example.gov.bd/inheritance' },
   { id: '4', title: 'নতুন বিদ্যুৎ সংযোগ', link: 'https://example.gov.bd/electricity' }
+];
+
+export const landServicesData = [
+  { id: '1', title: 'ই-নামজারি আবেদন (Mutation)', link: 'https://mutation.land.gov.bd/', desc: 'জমির মালিকানা পরিবর্তনের আবেদন' },
+  { id: '2', title: 'ভূমি উন্নয়ন কর (Tax)', link: 'https://ldtax.gov.bd/', desc: 'অনলাইনে খাজনা বা ভূমি কর প্রদান' },
+  { id: '3', title: 'খতিয়ান অনুসন্ধান (Khatian)', link: 'https://eporcha.gov.bd/', desc: 'জমির পর্চা বা খতিয়ান যাচাই' },
+  { id: '4', title: 'মৌজা ম্যাপ (Maps)', link: 'https://eporcha.gov.bd/user/map-search', desc: 'অনলাইনে মৌজা ম্যাপ দেখা ও আবেদন' },
+  { id: '5', title: 'উত্তরাধিকার ক্যালকুলেটর', link: 'http://inheritance.gov.bd/', desc: 'সম্পদ বন্টন বা মিরাস ক্যালকুলেটর' }
 ];

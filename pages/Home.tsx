@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight } from 'lucide-react';
+import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -10,6 +10,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     { id: 'emergency', label: 'জরুরি সেবা', icon: PhoneCall, color: 'bg-red-500', shadow: 'shadow-red-100', desc: 'পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স' },
     { id: 'health', label: 'স্বাস্থ্য সেবা', icon: HeartPulse, color: 'bg-green-500', shadow: 'shadow-green-100', desc: 'হাসপাতাল, ডাক্তার ও ব্লাড ব্যাংক' },
     { id: 'directory', label: 'জেলা ডিরেক্টরি', icon: Building2, color: 'bg-blue-500', shadow: 'shadow-blue-100', desc: 'অফিস কর্মকর্তাদের তালিকা ও ফোন' },
+    { id: 'land', label: 'ভূমি সেবা', icon: Map, color: 'bg-amber-600', shadow: 'shadow-amber-100', desc: 'নামজারি আবেদন, খতিয়ান ও ভূমি উন্নয়ন কর' },
     { id: 'education', label: 'শিক্ষা প্রতিষ্ঠান', icon: GraduationCap, color: 'bg-indigo-500', shadow: 'shadow-indigo-100', desc: 'স্কুল, কলেজ ও ভার্সিটির তথ্য' },
     { id: 'tourism', label: 'দর্শনীয় স্থান', icon: MapPin, color: 'bg-orange-500', shadow: 'shadow-orange-100', desc: 'জেলার পর্যটন ও ম্যাপ লোকেশন' },
     { id: 'complaint', label: 'অভিযোগ বক্স', icon: MessageSquare, color: 'bg-purple-500', shadow: 'shadow-purple-100', desc: 'সরাসরি অভিযোগ ও পরামর্শ পাঠান' },

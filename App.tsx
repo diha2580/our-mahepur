@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -10,6 +9,7 @@ import TouristPlaces from './pages/TouristPlaces';
 import Education from './pages/Education';
 import ComplaintBox from './pages/ComplaintBox';
 import EApplications from './pages/EApplications';
+import LandServices from './pages/LandServices';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
@@ -127,6 +127,7 @@ const App: React.FC = () => {
       );
       case 'health': return <Health />;
       case 'directory': return <Directory />;
+      case 'land': return <LandServices />;
       case 'tourism': return <TouristPlaces />;
       case 'complaint': return <ComplaintBox />;
       case 'education': return <Education />;

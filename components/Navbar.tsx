@@ -2,12 +2,12 @@ import React from 'react';
 import { 
   Home, PhoneCall, HeartPulse, Building2, MapPin, 
   MessageSquare, Menu, LogIn, LogOut, ShieldCheck, 
-  UserCircle, FileText, GraduationCap 
+  UserCircle, FileText, GraduationCap, Landmark
 } from 'lucide-react';
 
 const iconMap: Record<string, any> = {
   Home, PhoneCall, HeartPulse, Building2, MapPin, 
-  MessageSquare, FileText, GraduationCap
+  MessageSquare, FileText, GraduationCap, Landmark
 };
 
 interface NavbarProps {

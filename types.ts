@@ -1,4 +1,3 @@
-
 export enum ServiceCategory {
   EMERGENCY = 'জরুরি সেবা',
   DIRECTORY = 'জেলা ডিরেক্টরি',
@@ -6,7 +5,8 @@ export enum ServiceCategory {
   EDUCATION = 'শিক্ষা প্রতিষ্ঠান',
   TOURISM = 'পর্যটন কেন্দ্র',
   COMPLAINT = 'অভিযোগ বক্স',
-  E_APPLICATION = 'ই-আবেদন'
+  E_APPLICATION = 'ই-আবেদন',
+  LAND = 'ভূমি সেবা'
 }
 
 export interface EmergencyContact {
