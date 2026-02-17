@@ -14,6 +14,7 @@ import History from './pages/History';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
+import DeveloperModal from './components/DeveloperModal';
 import { WifiOff, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { syncDataToCache } from './lib/cache';
 import { initStorage, getCurrentUser, logoutUser, getPortalData, updatePortalData, subscribeToData } from './lib/store';
@@ -24,6 +25,7 @@ const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
   const [portalData, setPortalData] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [showDevModal, setShowDevModal] = useState(false);
 
   useEffect(() => {
     initStorage();
@@ -202,7 +204,9 @@ const App: React.FC = () => {
         {renderPage()}
       </main>
 
-      <Footer />
+      <Footer onShowDev={() => setShowDevModal(true)} />
+      
+      {showDevModal && <DeveloperModal onClose={() => setShowDevModal(false)} />}
     </div>
   );
 };
