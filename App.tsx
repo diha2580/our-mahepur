@@ -153,7 +153,14 @@ const App: React.FC = () => {
         />
       );
       case 'land': return <LandServices onBack={handleBack} />;
-      case 'tourism': return <TouristPlaces onBack={handleBack} />;
+      case 'tourism': return (
+        <TouristPlaces 
+          spots={portalData.touristSpots || []} 
+          user={user}
+          onUpdate={(newSpots) => handleDataUpdate({ ...portalData, touristSpots: newSpots })}
+          onBack={handleBack} 
+        />
+      );
       case 'complaint': return <ComplaintBox onBack={handleBack} />;
       case 'education': return (
         <Education 

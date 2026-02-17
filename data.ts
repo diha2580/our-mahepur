@@ -62,9 +62,9 @@ export const healthFacilities: Hospital[] = [
 ];
 
 export const touristSpots: TouristPlace[] = [
-  { id: '1', name: 'ঐতিহাসিক রাজবাড়ি', description: 'জেলা শহরের কেন্দ্রস্থলে অবস্থিত ১৮শ শতাব্দীর একটি প্রাচীন স্থাপত্য।', image: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a594?auto=format&fit=crop&q=80&w=800', location: 'রাজবাড়ি রোড' },
-  { id: '2', name: 'জেলা লেক ও পার্ক', description: 'পারিবারিক ভ্রমণের জন্য জেলার সবথেকে জনপ্রিয় ও মনোরম স্থান।', image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800', location: 'লেক ভিউ রোড' },
-  { id: '3', name: 'কেন্দ্রীয় শহীদ মিনার', description: 'ভাষাসৈনিকদের স্মরণে নির্মিত জেলার প্রধান শহীদ মিনার প্রাঙ্গণ।', image: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?auto=format&fit=crop&q=80&w=800', location: 'শহর কেন্দ্র' }
+  { id: '1', name: 'ঐতিহাসিক রাজবাড়ি', description: 'জেলা শহরের কেন্দ্রস্থলে অবস্থিত ১৮শ শতাব্দীর একটি প্রাচীন স্থাপত্য।', image: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a594?auto=format&fit=crop&q=80&w=800', location: 'রাজবাড়ি রোড', mediaType: 'image' },
+  { id: '2', name: 'জেলা লেক ও পার্ক', description: 'পারিবারিক ভ্রমণের জন্য জেলার সবথেকে জনপ্রিয় ও মনোরম স্থান।', image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800', location: 'লেক ভিউ রোড', mediaType: 'image' },
+  { id: '3', name: 'কেন্দ্রীয় শহীদ মিনার', description: 'ভাষাসৈনিকদের স্মরণে নির্মিত জেলার প্রধান শহীদ মিনার প্রাঙ্গণ।', image: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?auto=format&fit=crop&q=80&w=800', location: 'শহর কেন্দ্র', mediaType: 'image' }
 ];
 
 export const educationData = [

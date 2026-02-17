@@ -39,8 +39,10 @@ export interface TouristPlace {
   id: string;
   name: string;
   description: string;
-  image: string;
+  image: string; // This will hold the base64 data for both images and videos
+  mediaType?: 'image' | 'video';
   location: string;
+  contributor?: string;
 }
 
 export interface Complaint {
