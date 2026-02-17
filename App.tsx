@@ -10,6 +10,7 @@ import Education from './pages/Education';
 import ComplaintBox from './pages/ComplaintBox';
 import EApplications from './pages/EApplications';
 import LandServices from './pages/LandServices';
+import History from './pages/History';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
@@ -54,7 +55,6 @@ const App: React.FC = () => {
     window.addEventListener('storage', handleStorageChange);
 
     // Simulated "Server Check" for real-time cloud updates
-    // In a real app, this would be a WebSocket or Server-Sent Events
     const syncInterval = setInterval(() => {
       const dataFromStore = getPortalData();
       if (JSON.stringify(dataFromStore) !== JSON.stringify(portalData)) {
@@ -131,6 +131,7 @@ const App: React.FC = () => {
 
     switch (activePage) {
       case 'home': return <Home onNavigate={setActivePage} />;
+      case 'history': return <History data={portalData.historyData} onBack={handleBack} />;
       case 'emergency': return (
         <Emergency 
           user={user} 

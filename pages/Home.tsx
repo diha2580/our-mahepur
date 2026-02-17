@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map } from 'lucide-react';
+import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map, BookOpen } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -7,6 +7,7 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   const services = [
+    { id: 'history', label: 'মহেশপুরের ইতিহাস', icon: BookOpen, color: 'bg-indigo-600', shadow: 'shadow-indigo-100', desc: 'জেলার প্রাচীন ইতিহাস ও ঐতিহ্য জানুন' },
     { id: 'emergency', label: 'জরুরি সেবা', icon: PhoneCall, color: 'bg-red-500', shadow: 'shadow-red-100', desc: 'পুলিশ, ফায়ার সার্ভিস ও অ্যাম্বুলেন্স' },
     { id: 'health', label: 'স্বাস্থ্য সেবা', icon: HeartPulse, color: 'bg-green-500', shadow: 'shadow-green-100', desc: 'হাসপাতাল, ডাক্তার ও ব্লাড ব্যাংক' },
     { id: 'directory', label: 'জেলা ডিরেক্টরি', icon: Building2, color: 'bg-blue-500', shadow: 'shadow-blue-100', desc: 'অফিস কর্মকর্তাদের তালিকা ও ফোন' },
@@ -61,7 +62,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             <button
               key={service.id}
               onClick={() => onNavigate(service.id)}
-              className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-500 text-left group flex items-center gap-6"
+              className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 text-left group flex items-center gap-6"
             >
               <div className={`${service.color} shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center text-white shadow-xl ${service.shadow} group-hover:scale-110 transition-transform duration-500`}>
                 <service.icon className="w-8 h-8 md:w-10 md:h-10" />

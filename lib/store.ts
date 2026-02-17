@@ -1,4 +1,4 @@
-import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, initialNavItems, ADMIN_EMAIL } from '../data';
+import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, historyData, initialNavItems, ADMIN_EMAIL } from '../data';
 
 const DATA_KEY = 'portal_app_data_v1';
 const USERS_KEY = 'portal_users_v1';
@@ -51,6 +51,7 @@ export const initStorage = () => {
         touristSpots,
         eApplications,
         educationData,
+        historyData,
         landServices: landServicesData,
         navItems: initialNavItems
       }));
