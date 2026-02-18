@@ -50,6 +50,7 @@ const App: React.FC = () => {
     
     const handleStorageChange = () => {
       setUser(getCurrentUser());
+      setPortalData(getPortalData());
     };
 
     window.addEventListener('online', handleOnline);
@@ -59,9 +60,12 @@ const App: React.FC = () => {
     // Simulated "Server Check" for real-time cloud updates
     const syncInterval = setInterval(() => {
       const dataFromStore = getPortalData();
-      if (JSON.stringify(dataFromStore) !== JSON.stringify(portalData)) {
-        setPortalData(dataFromStore);
-      }
+      setPortalData((prevData: any) => {
+        if (JSON.stringify(dataFromStore) !== JSON.stringify(prevData)) {
+          return dataFromStore;
+        }
+        return prevData;
+      });
     }, 5000);
 
     if (navigator.onLine) {
@@ -75,7 +79,7 @@ const App: React.FC = () => {
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [portalData]);
+  }, []);
 
   const handleLogout = () => {
     logoutUser();

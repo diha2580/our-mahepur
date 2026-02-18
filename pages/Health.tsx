@@ -12,6 +12,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
   const [filter, setFilter] = useState('All');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
   const [selectedHospitalId, setSelectedHospitalId] = useState('All');
+  const [selectedAvailability, setSelectedAvailability] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Mock Doctor Data - Linked to available facilities
@@ -44,11 +45,21 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
     const hospital = facilities.find(h => h.id === d.hospitalId);
     const matchesSpecialty = selectedSpecialty === 'All' || d.specialty === selectedSpecialty;
     const matchesHospital = selectedHospitalId === 'All' || d.hospitalId === selectedHospitalId;
+    
+    let matchesAvailability = true;
+    if (selectedAvailability === 'Weekdays') {
+      matchesAvailability = d.days.includes('শনি - বৃহস্পতি') || d.days.includes('প্রতিদিন');
+    } else if (selectedAvailability === 'Weekends') {
+      matchesAvailability = d.days.includes('প্রতিদিন') || d.days.includes('শুক্র');
+    } else if (selectedAvailability === 'Specific days') {
+      matchesAvailability = d.days.includes(',') && !d.days.includes('প্রতিদিন');
+    }
+
     const matchesSearch = 
       d.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       d.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
       hospital?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSpecialty && matchesHospital && matchesSearch;
+    return matchesSpecialty && matchesHospital && matchesAvailability && matchesSearch;
   });
 
   const clearSearch = () => setSearchQuery('');
@@ -158,35 +169,64 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
 
             {/* Hospital Filter (Available in Doctor View) */}
             {viewMode === 'doctors' && (
-              <div className="flex-1 lg:max-w-md">
-                <div className="flex items-center gap-2 mb-3 ml-1">
-                  <HospIcon className="w-3.5 h-3.5 text-blue-600" />
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">হাসপাতাল অনুযায়ী</p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setSelectedHospitalId('All')}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                      selectedHospitalId === 'All' 
-                        ? 'bg-blue-600 border-blue-600 text-white shadow-md' 
-                        : 'bg-white border-gray-100 text-gray-500 hover:border-blue-200 hover:text-blue-600'
-                    }`}
-                  >
-                    সব হাসপাতাল
-                  </button>
-                  {facilities.map((h) => (
+              <div className="flex flex-col md:flex-row gap-6 flex-1">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3 ml-1">
+                    <HospIcon className="w-3.5 h-3.5 text-blue-600" />
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">হাসপাতাল অনুযায়ী</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
                     <button
-                      key={h.id}
-                      onClick={() => setSelectedHospitalId(h.id)}
+                      onClick={() => setSelectedHospitalId('All')}
                       className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                        selectedHospitalId === h.id 
+                        selectedHospitalId === 'All' 
                           ? 'bg-blue-600 border-blue-600 text-white shadow-md' 
                           : 'bg-white border-gray-100 text-gray-500 hover:border-blue-200 hover:text-blue-600'
                       }`}
                     >
-                      {h.name}
+                      সব হাসপাতাল
                     </button>
-                  ))}
+                    {facilities.map((h) => (
+                      <button
+                        key={h.id}
+                        onClick={() => setSelectedHospitalId(h.id)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                          selectedHospitalId === h.id 
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-md' 
+                            : 'bg-white border-gray-100 text-gray-500 hover:border-blue-200 hover:text-blue-600'
+                        }`}
+                      >
+                        {h.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-3 ml-1">
+                    <CalendarCheck className="w-3.5 h-3.5 text-amber-600" />
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">উপলব্ধতা অনুযায়ী</p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { id: 'All', label: 'সব দিন' },
+                      { id: 'Weekdays', label: 'কর্মদিবস' },
+                      { id: 'Weekends', label: 'ছুটির দিন' },
+                      { id: 'Specific days', label: 'নির্দিষ্ট দিন' }
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setSelectedAvailability(opt.id)}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                          selectedAvailability === opt.id 
+                            ? 'bg-amber-600 border-amber-600 text-white shadow-md' 
+                            : 'bg-white border-gray-100 text-gray-500 hover:border-amber-200 hover:text-amber-600'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
