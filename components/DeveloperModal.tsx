@@ -9,7 +9,7 @@ const DeveloperModal: React.FC<DeveloperModalProps> = ({ onClose }) => {
   const [imgError, setImgError] = useState(false);
 
   // Using a direct high-quality anonymous professional man portrait
-  const profileImageUrl = "ttps//images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300";
+  const profileImageUrl = "https://i.postimg.cc/vmwM1hkW/IMG-20260131-WA0002-jpg.jpg";
   const fallbackAvatar = "https://api.dicebearom/7.x/avataaars/svg?seed=Nahian&backgroundColor=b6e3f4";
 
   return (

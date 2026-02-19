@@ -1,6 +1,8 @@
 import React, { useState, useRef, useMemo } from 'react';
 import { User, Mail, Phone, Lock, Camera, ArrowRight, Loader2, LogIn, Upload, ShieldCheck, ShieldAlert, Shield, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { loginUser, saveUser } from '../lib/store';
+import { supabase } from '../lib/supabase';
+import { ADMIN_EMAIL } from '../data';
 
 interface AuthProps {
   onSuccess: (user: any) => void;
@@ -67,15 +69,39 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSwitch, mode, onBack }) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    await new Promise(r => setTimeout(r, 800));
     try {
-      if (mode === 'signup') { saveUser(formData); alert('সফল হয়েছে! লগইন করুন।'); onSwitch(); }
-      else {
-        const user = loginUser(formData.email, formData.password);
+      if (mode === 'signup') {
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        if (authError) throw authError;
+
+        if (authData.user) {
+          const { error: profileError } = await supabase.from('profiles').insert([{
+            id: authData.user.id,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            profile_pic: formData.profilePic,
+            role: formData.email === ADMIN_EMAIL ? 'admin' : 'user'
+          }]);
+
+          if (profileError) throw profileError;
+          
+          alert('সফল হয়েছে! আপনার ইমেইল যাচাই করুন (যদি প্রয়োজন হয়) এবং লগইন করুন।');
+          onSwitch();
+        }
+      } else {
+        const user = await loginUser(formData.email, formData.password);
         if (user) onSuccess(user);
         else setError('ইমেইল বা পাসওয়ার্ড ভুল!');
       }
-    } catch (err) { setError('সমস্যা হয়েছে।'); }
+    } catch (err: any) { 
+      console.error(err);
+      setError(err.message || 'সমস্যা হয়েছে।'); 
+    }
     setLoading(false);
   };
 

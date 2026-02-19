@@ -26,16 +26,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   useEffect(() => {
-    const portalData = getPortalData();
-    const storedComplaints = getComplaints();
-    setData(portalData);
-    setComplaints(storedComplaints);
+    const loadData = async () => {
+      const portalData = getPortalData();
+      const storedComplaints = await getComplaints();
+      setData(portalData);
+      setComplaints(storedComplaints);
+    };
+    loadData();
   }, []);
 
   if (!data) return <div className="p-10 text-center text-black">লোড হচ্ছে...</div>;
 
-  const handleSaveAll = () => {
-    updatePortalData(data);
+  const handleSaveAll = async () => {
+    await updatePortalData(data);
     alert('তথ্য সফলভাবে সেভ করা হয়েছে!');
     window.dispatchEvent(new Event('storage'));
   };
@@ -51,18 +54,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     }, 800);
   };
 
-  const handleDelete = (category: string, id: string) => {
+  const handleDelete = async (category: string, id: string) => {
     if (!confirm('আপনি কি নিশ্চিত যে এটি ডিলিট করতে চান?')) return;
     const newData = { ...data };
     newData[category] = newData[category].filter((item: any) => item.id !== id);
     setData(newData);
-    updatePortalData(newData);
+    await updatePortalData(newData);
   };
 
-  const handleDeleteComplaint = (id: string) => {
+  const handleDeleteComplaint = async (id: string) => {
     if (!confirm('আপনি কি নিশ্চিত যে এই অভিযোগটি ডিলিট করতে চান?')) return;
-    deleteComplaint(id);
-    setComplaints(getComplaints());
+    await deleteComplaint(id);
+    setComplaints(await getComplaints());
   };
 
   const handleSendReply = async () => {
@@ -75,11 +78,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
         contents: `A citizen named ${selectedComplaint.name} made a complaint about "${selectedComplaint.subject}". Admin's brief note for reply: "${replyText}". Write a professional reply in Bengali.`,
       });
       const professionalReply = response.text || replyText;
-      const updated = updateComplaint(selectedComplaint.id, { reply: professionalReply, repliedAt: new Date().toLocaleString('bn-BD'), status: 'Resolved' });
+      const updated = await updateComplaint(selectedComplaint.id, { reply: professionalReply, repliedAt: new Date().toLocaleString('bn-BD'), status: 'Resolved' });
       if (updated) {
         setReplyText('');
         setSelectedComplaint(null);
-        setComplaints(getComplaints());
+        setComplaints(await getComplaints());
       }
     } catch (error) {
       alert("উত্তর পাঠাতে সমস্যা হয়েছে।");
@@ -99,7 +102,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     }
   };
 
-  const saveEdit = () => {
+  const saveEdit = async () => {
     const newData = { ...data };
     const currentList = newData[activeTab] || [];
     const index = currentList.findIndex((i: any) => i.id === editingItem.id);
@@ -107,7 +110,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     else currentList.push(editingItem);
     newData[activeTab] = currentList;
     setData(newData);
-    updatePortalData(newData);
+    await updatePortalData(newData);
     setEditingItem(null);
   };
 

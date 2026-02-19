@@ -14,14 +14,60 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
   const [selectedHospitalId, setSelectedHospitalId] = useState('All');
   const [selectedAvailability, setSelectedAvailability] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
 
   // Mock Doctor Data - Linked to available facilities
   const doctors = useMemo(() => [
-    { id: 'd1', name: 'ডাঃ তৌহিদুর রহমান', specialty: 'Medicine', degree: 'MBBS, BCS (Health), FCPS', hospitalId: '1', time: '০৪:০০ - ০৮:০০', days: 'শনি - বৃহস্পতি' },
-    { id: 'd2', name: 'ডাঃ মেহজাবিন আলম', specialty: 'Pediatrics', degree: 'MBBS, DCH (BSMMU)', hospitalId: '1', time: '০৫:০০ - ০৭:০০', days: 'রবি, মঙ্গল, বৃহস্পতি' },
-    { id: 'd3', name: 'ডাঃ আসাদুজ্জামান', specialty: 'Surgery', degree: 'MBBS, MS (General Surgery)', hospitalId: '2', time: '০৬:০০ - ০৯:০০', days: 'প্রতিদিন' },
-    { id: 'd4', name: 'ডাঃ ফারজানা ইয়াসমিন', specialty: 'Gynecology', degree: 'MBBS, FCPS (Gynae)', hospitalId: '2', time: '০৪:৩০ - ০৭:৩০', days: 'শনি, সোম, বুধ' },
-    { id: 'd5', name: 'ডাঃ শাহরিয়ার আহমেদ', specialty: 'Pathology', degree: 'MBBS, MD (Pathology)', hospitalId: '2', time: '১০:০০ - ০২:০০', days: 'শনি - বৃহস্পতি' },
+    { 
+      id: 'd1', 
+      name: 'ডাঃ তৌহিদুর রহমান', 
+      specialty: 'Medicine', 
+      degree: 'MBBS, BCS (Health), FCPS (Medicine)', 
+      hospitalId: '1', 
+      time: '০৪:০০ - ০৮:০০', 
+      days: 'শনি - বৃহস্পতি',
+      bio: 'ডাঃ তৌহিদুর রহমান একজন অভিজ্ঞ মেডিসিন বিশেষজ্ঞ। তিনি দীর্ঘ ১০ বছর ধরে সরকারি ও বেসরকারি পর্যায়ে চিকিৎসা সেবা প্রদান করছেন।'
+    },
+    { 
+      id: 'd2', 
+      name: 'ডাঃ মেহজাবিন আলম', 
+      specialty: 'Pediatrics', 
+      degree: 'MBBS, DCH (BSMMU), FCPS (Pediatrics)', 
+      hospitalId: '1', 
+      time: '০৫:০০ - ০৭:০০', 
+      days: 'রবি, মঙ্গল, বৃহস্পতি',
+      bio: 'শিশুরোগ বিশেষজ্ঞ হিসেবে ডাঃ মেহজাবিন আলম অত্যন্ত সুপরিচিত। তিনি শিশুদের শারীরিক ও মানসিক বিকাশে বিশেষ গুরুত্ব দিয়ে থাকেন।'
+    },
+    { 
+      id: 'd3', 
+      name: 'ডাঃ আসাদুজ্জামান', 
+      specialty: 'Surgery', 
+      degree: 'MBBS, MS (General Surgery), FRCS', 
+      hospitalId: '2', 
+      time: '০৬:০০ - ০৯:০০', 
+      days: 'প্রতিদিন',
+      bio: 'জেনারেল সার্জন হিসেবে ডাঃ আসাদুজ্জামান অসংখ্য সফল অপারেশন সম্পন্ন করেছেন। তিনি আধুনিক সার্জিক্যাল পদ্ধতিতে পারদর্শী।'
+    },
+    { 
+      id: 'd4', 
+      name: 'ডাঃ ফারজানা ইয়াসমিন', 
+      specialty: 'Gynecology', 
+      degree: 'MBBS, FCPS (Gynae), DGO', 
+      hospitalId: '2', 
+      time: '০৪:৩০ - ০৭:৩০', 
+      days: 'শনি, সোম, বুধ',
+      bio: 'স্ত্রী ও প্রসূতি রোগ বিশেষজ্ঞ ডাঃ ফারজানা ইয়াসমিন মাতৃত্বকালীন স্বাস্থ্য ও নারী স্বাস্থ্য সচেতনতায় কাজ করছেন।'
+    },
+    { 
+      id: 'd5', 
+      name: 'ডাঃ শাহরিয়ার আহমেদ', 
+      specialty: 'Pathology', 
+      degree: 'MBBS, MD (Pathology), DCP', 
+      hospitalId: '2', 
+      time: '১০:০০ - ০২:০০', 
+      days: 'শনি - বৃহস্পতি',
+      bio: 'প্যাথলজি বিশেষজ্ঞ হিসেবে ডাঃ শাহরিয়ার আহমেদ নির্ভুল রোগ নির্ণয়ে সহায়তা করেন। তিনি আধুনিক ল্যাবরেটরি প্রযুক্তিতে অভিজ্ঞ।'
+    },
   ], []);
 
   // Extract unique specialties
@@ -290,7 +336,11 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
             filteredDoctors.map((doctor) => {
               const hospital = facilities.find(h => h.id === doctor.hospitalId);
               return (
-                <div key={doctor.id} className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 group relative flex flex-col">
+                <div 
+                  key={doctor.id} 
+                  onClick={() => setSelectedDoctor(doctor)}
+                  className="bg-white rounded-[2.5rem] p-8 shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 group relative flex flex-col cursor-pointer"
+                >
                   <div className="flex items-center gap-5 mb-6">
                     <div className="relative">
                       <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 border-2 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform duration-500">
@@ -358,6 +408,91 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                <button onClick={() => {setSearchQuery(''); setSelectedSpecialty('All'); setSelectedHospitalId('All');}} className="mt-4 text-green-600 font-bold hover:underline">সব ডাক্তার দেখুন</button>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Doctor Detail Modal */}
+      {selectedDoctor && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-white w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="relative h-48 bg-gradient-to-br from-green-600 to-green-800 p-8 flex items-end">
+              <button 
+                onClick={() => setSelectedDoctor(null)}
+                className="absolute top-6 right-6 bg-white/20 hover:bg-white/40 p-2 rounded-full text-white transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="flex items-center gap-6 translate-y-12">
+                <div className="w-32 h-32 rounded-3xl bg-white p-1 shadow-2xl">
+                  <img 
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}`} 
+                    className="w-full h-full rounded-[1.4rem] object-cover bg-green-50" 
+                    alt={selectedDoctor.name} 
+                  />
+                </div>
+                <div className="pb-4">
+                  <h3 className="text-3xl font-black text-white leading-tight mb-1">{selectedDoctor.name}</h3>
+                  <p className="text-green-100 font-bold uppercase tracking-widest text-sm">{selectedDoctor.specialty} Specialist</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="p-8 pt-20 space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-blue-50 p-3 rounded-2xl text-blue-600"><Stethoscope className="w-6 h-6" /></div>
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">ডিগ্রি ও যোগ্যতা</p>
+                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.degree}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600"><HospIcon className="w-6 h-6" /></div>
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">চেম্বার/হাসপাতাল</p>
+                      <p className="text-sm font-bold text-gray-700">
+                        {facilities.find(h => h.id === selectedDoctor.hospitalId)?.name || 'অজ্ঞাত'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="flex items-start gap-4">
+                    <div className="bg-amber-50 p-3 rounded-2xl text-amber-600"><Clock className="w-6 h-6" /></div>
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">রোগী দেখার সময়</p>
+                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <div className="bg-green-50 p-3 rounded-2xl text-green-600"><CalendarCheck className="w-6 h-6" /></div>
+                    <div>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">উপলব্ধ দিনসমূহ</p>
+                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.days}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {selectedDoctor.bio && (
+                <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">ডাক্তার সম্পর্কে</p>
+                  <p className="text-sm text-gray-600 leading-relaxed font-medium">{selectedDoctor.bio}</p>
+                </div>
+              )}
+
+              <div className="flex gap-4">
+                <a 
+                  href={`tel:${formatPhoneForDialer(facilities.find(h => h.id === selectedDoctor.hospitalId)?.phone || '')}`}
+                  className="flex-1 bg-green-600 text-white py-5 rounded-[1.5rem] font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-green-100 hover:bg-green-700 transition-all active:scale-95"
+                >
+                  <Phone className="w-5 h-5" /> সিরিয়াল বুক করুন
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

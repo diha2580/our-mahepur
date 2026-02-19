@@ -11,6 +11,7 @@ import ComplaintBox from './pages/ComplaintBox';
 import EApplications from './pages/EApplications';
 import LandServices from './pages/LandServices';
 import History from './pages/History';
+import Contact from './pages/Contact';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
@@ -28,12 +29,16 @@ const App: React.FC = () => {
   const [showDevModal, setShowDevModal] = useState(false);
 
   useEffect(() => {
-    initStorage();
-    setUser(getCurrentUser());
-    
-    // Initial data load
-    const initialData = getPortalData();
-    setPortalData(initialData);
+    const setup = async () => {
+      await initStorage();
+      setUser(getCurrentUser());
+      
+      // Initial data load
+      const initialData = getPortalData();
+      setPortalData(initialData);
+    };
+
+    setup();
 
     // Subscribe to real-time updates from store
     const unsubscribe = subscribeToData((newData) => {
@@ -81,8 +86,8 @@ const App: React.FC = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    logoutUser();
+  const handleLogout = async () => {
+    await logoutUser();
     setUser(null);
     setActivePage('home');
   };
@@ -91,8 +96,8 @@ const App: React.FC = () => {
     setUser(updatedUser);
   };
 
-  const handleDataUpdate = (newData: any) => {
-    updatePortalData(newData);
+  const handleDataUpdate = async (newData: any) => {
+    await updatePortalData(newData);
   };
 
   const handleBack = () => setActivePage('home');
@@ -175,6 +180,7 @@ const App: React.FC = () => {
         />
       );
       case 'eapps': return <EApplications onBack={handleBack} />;
+      case 'contact': return <Contact onBack={handleBack} />;
       default: return <Home onNavigate={setActivePage} />;
     }
   };

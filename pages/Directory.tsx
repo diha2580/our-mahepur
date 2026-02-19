@@ -1,11 +1,20 @@
 import React from 'react';
-import { Building2, Mail, Phone, ExternalLink, UserCircle2, ArrowLeft } from 'lucide-react';
+import { Building2, Mail, Phone, ExternalLink, UserCircle2, ArrowLeft, Gavel, Shield, Landmark, Briefcase } from 'lucide-react';
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface DirectoryProps {
   officials: any[];
   onBack: () => void;
 }
+
+const getDesignationIcon = (designation: string) => {
+  const d = designation.toLowerCase();
+  if (d.includes('dc') || d.includes('uno') || d.includes('executive') || d.includes('commissioner')) return <Landmark className="w-3 h-3 mr-1" />;
+  if (d.includes('sp') || d.includes('police') || d.includes('security')) return <Shield className="w-3 h-3 mr-1" />;
+  if (d.includes('judge') || d.includes('magistrate') || d.includes('justice')) return <Gavel className="w-3 h-3 mr-1" />;
+  if (d.includes('officer') || d.includes('manager')) return <Briefcase className="w-3 h-3 mr-1" />;
+  return <Building2 className="w-3 h-3 mr-1" />;
+};
 
 const Directory: React.FC<DirectoryProps> = ({ officials, onBack }) => {
   return (
@@ -51,7 +60,10 @@ const Directory: React.FC<DirectoryProps> = ({ officials, onBack }) => {
                     </div>
                     <div>
                       <div className="font-bold text-gray-900">{official.name}</div>
-                      <div className="text-xs text-blue-600 font-bold uppercase">{official.designation}</div>
+                      <div className="text-xs text-blue-600 font-bold uppercase flex items-center">
+                        {getDesignationIcon(official.designation)}
+                        {official.designation}
+                      </div>
                     </div>
                   </div>
                 </td>

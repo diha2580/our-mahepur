@@ -1,9 +1,11 @@
 import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, historyData, initialNavItems, ADMIN_EMAIL } from '../data';
+import { supabase } from './supabase';
 
 const DATA_KEY = 'portal_app_data_v1';
 const USERS_KEY = 'portal_users_v1';
 const CURRENT_USER_KEY = 'portal_current_user';
 const COMPLAINTS_KEY = 'portal_complaints_v1';
+const CONTACT_MESSAGES_KEY = 'portal_contact_messages_v1';
 const ADMIN_PWD_KEY = 'portal_admin_password';
 
 // Observer Pattern for Real-time Updates
@@ -33,18 +35,20 @@ export const getAdminPassword = () => {
 
 export const updateAdminPassword = (newPassword: string) => {
   localStorage.setItem(ADMIN_PWD_KEY, newPassword);
-  const users = getUsers();
-  const adminIndex = users.findIndex((u: any) => u.email === ADMIN_EMAIL);
-  if (adminIndex !== -1) {
-    users[adminIndex].password = newPassword;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }
+  // Note: In a real Supabase setup, you'd update the user's password via supabase.auth.updateUser
 };
 
-export const initStorage = () => {
+export const initStorage = async () => {
   try {
-    if (!localStorage.getItem(DATA_KEY)) {
-      localStorage.setItem(DATA_KEY, JSON.stringify({
+    // Check if portal data exists in Supabase
+    const { data: existingData, error: fetchError } = await supabase
+      .from('portal_data')
+      .select('data')
+      .eq('id', 'main')
+      .single();
+
+    if (fetchError || !existingData) {
+      const initialData = {
         emergencyContacts,
         districtOfficials,
         healthFacilities,
@@ -54,32 +58,20 @@ export const initStorage = () => {
         historyData,
         landServices: landServicesData,
         navItems: initialNavItems
-      }));
-    }
-    
-    const users = getUsers();
-    const adminIndex = users.findIndex((u: any) => u.email === ADMIN_EMAIL);
-    
-    const adminUser = {
-      id: 'admin-1',
-      name: 'অ্যাডমিন ইউজার',
-      email: ADMIN_EMAIL,
-      phone: '01700000000',
-      profilePic: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin',
-      role: 'admin',
-      password: getAdminPassword()
-    };
-
-    if (adminIndex === -1) {
-      users.push(adminUser);
+      };
+      
+      await supabase.from('portal_data').upsert({ id: 'main', data: initialData });
+      localStorage.setItem(DATA_KEY, JSON.stringify(initialData));
     } else {
-      users[adminIndex].password = getAdminPassword();
+      localStorage.setItem(DATA_KEY, JSON.stringify(existingData.data));
     }
     
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-
+    // Initialize local storage for other keys if needed
     if (!localStorage.getItem(COMPLAINTS_KEY)) {
       localStorage.setItem(COMPLAINTS_KEY, JSON.stringify([]));
+    }
+    if (!localStorage.getItem(CONTACT_MESSAGES_KEY)) {
+      localStorage.setItem(CONTACT_MESSAGES_KEY, JSON.stringify([]));
     }
   } catch (e) {
     console.error("Storage initialization failed", e);
@@ -91,9 +83,13 @@ export const getPortalData = () => {
   return data ? JSON.parse(data) : null;
 };
 
-export const updatePortalData = (newData: any) => {
+export const updatePortalData = async (newData: any) => {
   try {
     localStorage.setItem(DATA_KEY, JSON.stringify(newData));
+    
+    // Sync with Supabase
+    await supabase.from('portal_data').upsert({ id: 'main', data: newData });
+
     // Notify same-tab listeners
     notifyListeners(newData);
     // Notify other-tab listeners
@@ -106,63 +102,136 @@ export const updatePortalData = (newData: any) => {
   }
 };
 
-export const getComplaints = () => {
-  const data = localStorage.getItem(COMPLAINTS_KEY);
-  return data ? JSON.parse(data) : [];
+export const getComplaints = async () => {
+  const { data, error } = await supabase
+    .from('complaints')
+    .select('*')
+    .order('date', { ascending: false });
+  
+  if (error) {
+    console.error("Error fetching complaints", error);
+    const localData = localStorage.getItem(COMPLAINTS_KEY);
+    return localData ? JSON.parse(localData) : [];
+  }
+  return data;
 };
 
-export const saveComplaint = (complaint: any) => {
-  const complaints = getComplaints();
+export const saveComplaint = async (complaint: any) => {
   const newComplaint = { 
     ...complaint, 
-    id: Date.now().toString(), 
     status: 'Pending', 
     date: new Date().toLocaleString('bn-BD') 
   };
-  complaints.unshift(newComplaint);
-  localStorage.setItem(COMPLAINTS_KEY, JSON.stringify(complaints));
-  return newComplaint;
-};
 
-export const updateComplaint = (id: string, updates: any) => {
-  const complaints = getComplaints();
-  const index = complaints.findIndex((c: any) => c.id === id);
-  if (index !== -1) {
-    complaints[index] = { ...complaints[index], ...updates };
+  const { data, error } = await supabase
+    .from('complaints')
+    .insert([newComplaint])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error saving complaint", error);
+    // Fallback to local storage
+    const complaints = JSON.parse(localStorage.getItem(COMPLAINTS_KEY) || '[]');
+    const localComplaint = { ...newComplaint, id: Date.now().toString() };
+    complaints.unshift(localComplaint);
     localStorage.setItem(COMPLAINTS_KEY, JSON.stringify(complaints));
-    return complaints[index];
+    return localComplaint;
   }
-  return null;
+  return data;
 };
 
-export const deleteComplaint = (id: string) => {
-  const complaints = getComplaints();
-  const filtered = complaints.filter((c: any) => c.id !== id);
-  localStorage.setItem(COMPLAINTS_KEY, JSON.stringify(filtered));
-};
+export const updateComplaint = async (id: string, updates: any) => {
+  const { data, error } = await supabase
+    .from('complaints')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
 
-export const getUsers = () => {
-  const users = localStorage.getItem(USERS_KEY);
-  return users ? JSON.parse(users) : [];
-};
-
-export const saveUser = (user: any) => {
-  const users = getUsers();
-  const newUser = { ...user, id: Date.now().toString(), role: user.email === ADMIN_EMAIL ? 'admin' : 'user' };
-  users.push(newUser);
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-};
-
-export const updateUser = (updatedUser: any) => {
-  const users = getUsers();
-  const index = users.findIndex((u: any) => u.id === updatedUser.id);
-  if (index !== -1) {
-    users[index] = updatedUser;
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(updatedUser));
-    return updatedUser;
+  if (error) {
+    console.error("Error updating complaint", error);
+    return null;
   }
-  return null;
+  return data;
+};
+
+export const deleteComplaint = async (id: string) => {
+  const { error } = await supabase
+    .from('complaints')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error("Error deleting complaint", error);
+  }
+};
+
+export const getContactMessages = async () => {
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .order('date', { ascending: false });
+  
+  if (error) {
+    console.error("Error fetching messages", error);
+    const localData = localStorage.getItem(CONTACT_MESSAGES_KEY);
+    return localData ? JSON.parse(localData) : [];
+  }
+  return data;
+};
+
+export const saveContactMessage = async (message: any) => {
+  const newMessage = { 
+    ...message, 
+    date: new Date().toLocaleString('bn-BD') 
+  };
+
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .insert([newMessage])
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error saving message", error);
+    const messages = JSON.parse(localStorage.getItem(CONTACT_MESSAGES_KEY) || '[]');
+    const localMsg = { ...newMessage, id: Date.now().toString() };
+    messages.unshift(localMsg);
+    localStorage.setItem(CONTACT_MESSAGES_KEY, JSON.stringify(messages));
+    return localMsg;
+  }
+  return data;
+};
+
+export const getUsers = async () => {
+  const { data, error } = await supabase.from('profiles').select('*');
+  return error ? [] : data;
+};
+
+export const saveUser = async (user: any) => {
+  // This is now handled by Supabase Auth in Auth.tsx
+  // But we might need to create the profile
+  const { data, error } = await supabase.from('profiles').insert([user]);
+  if (error) console.error("Error saving user profile", error);
+  return data;
+};
+
+export const updateUser = async (updatedUser: any) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .update(updatedUser)
+    .eq('id', updatedUser.id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating user profile", error);
+    return null;
+  }
+  
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(data));
+  return data;
 };
 
 export const getCurrentUser = () => {
@@ -170,16 +239,28 @@ export const getCurrentUser = () => {
   return user ? JSON.parse(user) : null;
 };
 
-export const loginUser = (email: string, pass: string) => {
-  const users = getUsers();
-  const user = users.find((u: any) => u.email === email && u.password === pass);
-  if (user) {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-    return user;
+export const loginUser = async (email: string, pass: string) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password: pass,
+  });
+
+  if (error) throw error;
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+
+  if (profile) {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(profile));
+    return profile;
   }
   return null;
 };
 
-export const logoutUser = () => {
+export const logoutUser = async () => {
+  await supabase.auth.signOut();
   localStorage.removeItem(CURRENT_USER_KEY);
 };

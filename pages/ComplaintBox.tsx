@@ -50,7 +50,7 @@ const ComplaintBox: React.FC<ComplaintBoxProps> = ({ onBack }) => {
     if (!validateForm()) return;
     setIsSending(true);
     try {
-      saveComplaint(formData);
+      await saveComplaint(formData);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = `Analyze this citizen complaint for a government district portal. Generate a professional 1-sentence acknowledgement in Bengali. User Name: ${formData.name} Subject: ${formData.subject} Complaint: ${formData.message}`;
       const response = await ai.models.generateContent({ model: 'gemini-3-flash-preview', contents: prompt });

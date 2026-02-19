@@ -12,6 +12,7 @@ export const initialNavItems = [
   { id: 'education', label: 'শিক্ষা', icon: 'GraduationCap' },
   { id: 'tourism', label: 'পর্যটন', icon: 'MapPin' },
   { id: 'complaint', label: 'অভিযোগ', icon: 'MessageSquare' },
+  { id: 'contact', label: 'যোগাযোগ', icon: 'PhoneCall' },
   { id: 'eapps', label: 'ই-আবেদন', icon: 'FileText' },
 ];
 

@@ -29,7 +29,7 @@ const Footer: React.FC<FooterProps> = ({ onShowDev }) => {
             <h3 className="text-lg font-bold mb-4 text-green-500">যোগাযোগ</h3>
             <p className="text-sm text-gray-400">
               ইমেইল: info@moheshpur.gov.bd <br />
-              হেল্পলাইন: ৩৩৩, ৯৯৯ (জরুরি)
+              হেল্পলাইন: 01953800351 (জরুরি)
             </p>
           </div>
         </div>

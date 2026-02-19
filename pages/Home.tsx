@@ -15,6 +15,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     { id: 'education', label: 'শিক্ষা প্রতিষ্ঠান', icon: GraduationCap, color: 'bg-indigo-500', shadow: 'shadow-indigo-100', desc: 'স্কুল, কলেজ ও ভার্সিটির তথ্য' },
     { id: 'tourism', label: 'দর্শনীয় স্থান', icon: MapPin, color: 'bg-orange-500', shadow: 'shadow-orange-100', desc: 'জেলার পর্যটন ও ম্যাপ লোকেশন' },
     { id: 'complaint', label: 'অভিযোগ বক্স', icon: MessageSquare, color: 'bg-purple-500', shadow: 'shadow-purple-100', desc: 'সরাসরি অভিযোগ ও পরামর্শ পাঠান' },
+    { id: 'contact', label: 'যোগাযোগ', icon: PhoneCall, color: 'bg-blue-600', shadow: 'shadow-blue-100', desc: 'আমাদের সাথে সরাসরি যোগাযোগ করুন' },
     { id: 'eapps', label: 'ই-আবেদন', icon: FileText, color: 'bg-teal-500', shadow: 'shadow-teal-100', desc: 'অনলাইন ফরম ও সার্টিফিকেটের লিংক' },
   ];
 

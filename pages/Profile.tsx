@@ -47,9 +47,9 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     try {
-      const updated = updateUser(formData);
+      const updated = await updateUser(formData);
       if (updated) {
         onUpdate(updated);
         setIsEditing(false);
