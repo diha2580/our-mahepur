@@ -180,7 +180,7 @@ const App: React.FC = () => {
         />
       );
       case 'eapps': return <EApplications onBack={handleBack} />;
-      case 'contact': return <Contact onBack={handleBack} />;
+      case 'contact': return <Contact contactInfo={portalData.contactInfo} onBack={handleBack} />;
       default: return <Home onNavigate={setActivePage} />;
     }
   };

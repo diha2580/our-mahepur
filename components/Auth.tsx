@@ -2,7 +2,6 @@ import React, { useState, useRef, useMemo } from 'react';
 import { User, Mail, Phone, Lock, Camera, ArrowRight, Loader2, LogIn, Upload, ShieldCheck, ShieldAlert, Shield, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { loginUser, saveUser } from '../lib/store';
 import { supabase } from '../lib/supabase';
-import { ADMIN_EMAIL } from '../data';
 
 interface AuthProps {
   onSuccess: (user: any) => void;
@@ -85,7 +84,7 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSwitch, mode, onBack }) => {
             email: formData.email,
             phone: formData.phone,
             profile_pic: formData.profilePic,
-            role: formData.email === ADMIN_EMAIL ? 'admin' : 'user'
+            role: 'user'
           }]);
 
           if (profileError) throw profileError;
@@ -100,7 +99,13 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSwitch, mode, onBack }) => {
       }
     } catch (err: any) { 
       console.error(err);
-      setError(err.message || 'সমস্যা হয়েছে।'); 
+      let msg = err.message || 'সমস্যা হয়েছে।';
+      if (msg.includes('User already registered')) {
+        msg = 'এই ইমেইলটি ইতিমধ্যে নিবন্ধিত। অনুগ্রহ করে লগইন করুন।';
+      } else if (msg.includes('Invalid login credentials')) {
+        msg = 'ইমেইল বা পাসওয়ার্ড ভুল!';
+      }
+      setError(msg); 
     }
     setLoading(false);
   };

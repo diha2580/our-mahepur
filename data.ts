@@ -1,7 +1,5 @@
 import { EmergencyContact, Official, Hospital, TouristPlace } from './types';
 
-export const ADMIN_EMAIL = 'nahiannafiz07@gmail.com';
-
 export const initialNavItems = [
   { id: 'home', label: 'হোম', icon: 'Home' },
   { id: 'history', label: 'ইতিহাস', icon: 'BookOpen' },
@@ -89,3 +87,10 @@ export const landServicesData = [
   { id: '4', title: 'মৌজা ম্যাপ (Maps)', link: 'https://eporcha.gov.bd/user/map-search', desc: 'অনলাইনে মৌজা ম্যাপ দেখা ও আবেদন' },
   { id: '5', title: 'উত্তরাধিকার ক্যালকুলেটর', link: 'http://inheritance.gov.bd/', desc: 'সম্পদ বন্টন বা মিরাস ক্যালকুলেটর' }
 ];
+
+export const contactInfo = {
+  address: 'উপজেলা পরিষদ কমপ্লেক্স, মহেশপুর, ঝিনাইদহ',
+  email: 'info@moheshpur.gov.bd',
+  phone: '০১৭০০-০০০০০০',
+  supportText: 'আমাদের সাপোর্ট টিম ২৪/৭ আপনার সেবায় নিয়োজিত। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন।'
+};

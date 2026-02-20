@@ -122,6 +122,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     { id: 'touristSpots', label: 'পর্যটন', icon: MapPin },
     { id: 'eApplications', label: 'ই-আবেদন', icon: FileText },
     { id: 'navItems', label: 'মেনু বার', icon: Layout },
+    { id: 'contactInfo', label: 'যোগাযোগ তথ্য', icon: Phone },
     { id: 'complaints', label: 'অভিযোগ', icon: MessageSquareText },
     { id: 'settings', label: 'সেটিংস', icon: Settings },
   ];
@@ -152,7 +153,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
       <div className="p-8 flex-grow">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-bold text-black">{tabs.find(t => t.id === activeTab)?.label}</h3>
-          {activeTab !== 'complaints' && activeTab !== 'settings' && (
+          {activeTab !== 'complaints' && activeTab !== 'settings' && activeTab !== 'contactInfo' && (
             <button onClick={() => setEditingItem(getInitialItem(activeTab))} className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 font-bold transition-all active:scale-95"><Plus className="w-4 h-4 text-white" /> নতুন যোগ করুন</button>
           )}
         </div>
@@ -165,6 +166,31 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                 <div className="relative"><Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" /><input type={showNewPassword ? "text" : "password"} placeholder="নতুন পাসওয়ার্ড লিখুন" className="w-full pl-12 pr-12 py-3 bg-white border border-gray-200 rounded-2xl outline-none focus:ring-2 focus:ring-blue-100 transition-all text-black" value={newPassword} onChange={e => setNewPassword(e.target.value)} /><button type="button" onClick={() => setShowNewPassword(!showNewPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-600 transition-colors">{showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}</button></div>
                 <button onClick={handlePasswordUpdate} disabled={isUpdatingPassword || !newPassword} className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold shadow-lg shadow-blue-100 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50">{isUpdatingPassword ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}<span>পাসওয়ার্ড আপডেট করুন</span></button>
               </div>
+            </div>
+          </div>
+        ) : activeTab === 'contactInfo' ? (
+          <div className="max-w-2xl mx-auto space-y-6 animate-in slide-in-from-bottom duration-300">
+            <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-black opacity-60">ঠিকানা</label>
+                <input className="w-full p-3 border rounded-xl" value={data.contactInfo?.address || ''} onChange={e => setData({...data, contactInfo: {...data.contactInfo, address: e.target.value}})} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-black opacity-60">ইমেইল</label>
+                <input className="w-full p-3 border rounded-xl" value={data.contactInfo?.email || ''} onChange={e => setData({...data, contactInfo: {...data.contactInfo, email: e.target.value}})} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-black opacity-60">ফোন</label>
+                <input className="w-full p-3 border rounded-xl" value={data.contactInfo?.phone || ''} onChange={e => setData({...data, contactInfo: {...data.contactInfo, phone: e.target.value}})} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-black opacity-60">সহায়তা টেক্সট</label>
+                <textarea className="w-full p-3 border rounded-xl" rows={3} value={data.contactInfo?.supportText || ''} onChange={e => setData({...data, contactInfo: {...data.contactInfo, supportText: e.target.value}})} />
+              </div>
+              <button onClick={handleSaveAll} className="w-full py-4 bg-green-600 hover:bg-green-700 text-white rounded-2xl font-bold shadow-lg shadow-green-100 transition-all active:scale-95 flex items-center justify-center gap-2">
+                <Save className="w-5 h-5" />
+                <span>তথ্য সেভ করুন</span>
+              </button>
             </div>
           </div>
         ) : activeTab === 'complaints' ? (

@@ -1,4 +1,4 @@
-import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, historyData, initialNavItems, ADMIN_EMAIL } from '../data';
+import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, historyData, initialNavItems, contactInfo } from '../data';
 import { supabase } from './supabase';
 
 const DATA_KEY = 'portal_app_data_v1';
@@ -57,7 +57,8 @@ export const initStorage = async () => {
         educationData,
         historyData,
         landServices: landServicesData,
-        navItems: initialNavItems
+        navItems: initialNavItems,
+        contactInfo
       };
       
       await supabase.from('portal_data').upsert({ id: 'main', data: initialData });

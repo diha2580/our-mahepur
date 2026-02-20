@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { User, Mail, Phone, Camera, Save, LogOut, ChevronRight, Edit3, Shield, ArrowLeft } from 'lucide-react';
+import { User, Mail, Phone, Camera, Save, LogOut, ChevronRight, Edit3, Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import { updateUser } from '../lib/store';
 
 interface ProfileProps {
@@ -11,6 +11,7 @@ interface ProfileProps {
 
 const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({ ...user });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -41,13 +42,14 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
       const reader = new FileReader();
       reader.onloadend = async () => {
         const compressed = await compressAndResizeImage(reader.result as string);
-        setFormData({ ...formData, profilePic: compressed });
+        setFormData({ ...formData, profile_pic: compressed });
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       const updated = await updateUser(formData);
       if (updated) {
@@ -57,6 +59,8 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
       }
     } catch (err) {
       alert('প্রোফাইল আপডেট করতে সমস্যা হয়েছে।');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -84,7 +88,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
         <div className="lg:col-span-1">
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center sticky top-24">
             <div className="relative inline-block mb-6">
-              <img src={isEditing ? formData.profilePic : user.profilePic} className="w-32 h-32 rounded-full border-4 border-green-50 object-cover bg-gray-50 shadow-md mx-auto" alt="Profile" />
+              <img src={isEditing ? formData.profile_pic : user.profile_pic} className="w-32 h-32 rounded-full border-4 border-green-50 object-cover bg-gray-50 shadow-md mx-auto" alt="Profile" />
               {isEditing && <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 right-0 bg-green-600 text-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-transform"><Camera className="w-5 h-5 text-white" /></button>}
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
             </div>
@@ -118,7 +122,10 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
               {isEditing && (
                 <div className="flex gap-3 pt-6 border-t border-gray-100">
                   <button onClick={() => {setIsEditing(false); setFormData({...user});}} className="flex-1 bg-gray-100 text-black py-3 rounded-2xl font-bold hover:bg-gray-200 transition-all">বাতিল</button>
-                  <button onClick={handleSave} className="flex-1 bg-green-600 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 shadow-lg shadow-green-100 transition-all"><Save className="w-4 h-4 text-white" /> সেভ করুন</button>
+                  <button onClick={handleSave} disabled={isSaving} className="flex-1 bg-green-600 text-white py-3 rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-green-700 shadow-lg shadow-green-100 transition-all disabled:opacity-50">
+                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin text-white" /> : <Save className="w-4 h-4 text-white" />}
+                    {isSaving ? 'সেভ হচ্ছে...' : 'সেভ করুন'}
+                  </button>
                 </div>
               )}
             </div>

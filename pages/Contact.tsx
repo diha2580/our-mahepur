@@ -3,10 +3,16 @@ import { Mail, Phone, MapPin, Send, CheckCircle2, ArrowLeft } from 'lucide-react
 import { saveContactMessage } from '../lib/store';
 
 interface ContactProps {
+  contactInfo?: {
+    address: string;
+    email: string;
+    phone: string;
+    supportText: string;
+  };
   onBack: () => void;
 }
 
-const Contact: React.FC<ContactProps> = ({ onBack }) => {
+const Contact: React.FC<ContactProps> = ({ contactInfo, onBack }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -67,7 +73,7 @@ const Contact: React.FC<ContactProps> = ({ onBack }) => {
                 </div>
                 <div>
                   <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">ঠিকানা</p>
-                  <p className="text-sm font-bold text-gray-700">উপজেলা পরিষদ কমপ্লেক্স, মহেশপুর, ঝিনাইদহ</p>
+                  <p className="text-sm font-bold text-gray-700">{contactInfo?.address || 'উপজেলা পরিষদ কমপ্লেক্স, মহেশপুর, ঝিনাইদহ'}</p>
                 </div>
               </div>
 
@@ -77,7 +83,7 @@ const Contact: React.FC<ContactProps> = ({ onBack }) => {
                 </div>
                 <div>
                   <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">ইমেইল</p>
-                  <p className="text-sm font-bold text-gray-700">info@moheshpur.gov.bd</p>
+                  <p className="text-sm font-bold text-gray-700">{contactInfo?.email || 'info@moheshpur.gov.bd'}</p>
                 </div>
               </div>
 
@@ -87,7 +93,7 @@ const Contact: React.FC<ContactProps> = ({ onBack }) => {
                 </div>
                 <div>
                   <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">ফোন</p>
-                  <p className="text-sm font-bold text-gray-700">০১৭০০-০০০০০০</p>
+                  <p className="text-sm font-bold text-gray-700">{contactInfo?.phone || '০১৭০০-০০০০০০'}</p>
                 </div>
               </div>
             </div>
@@ -95,7 +101,7 @@ const Contact: React.FC<ContactProps> = ({ onBack }) => {
 
           <div className="bg-green-600 p-8 rounded-[2.5rem] shadow-xl text-white">
             <h3 className="text-xl font-black mb-4">সহায়তা প্রয়োজন?</h3>
-            <p className="text-sm font-medium opacity-80 mb-6">আমাদের সাপোর্ট টিম ২৪/৭ আপনার সেবায় নিয়োজিত। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন।</p>
+            <p className="text-sm font-medium opacity-80 mb-6">{contactInfo?.supportText || 'আমাদের সাপোর্ট টিম ২৪/৭ আপনার সেবায় নিয়োজিত। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন।'}</p>
             <button className="w-full py-4 bg-white text-green-600 rounded-2xl font-black text-sm hover:bg-green-50 transition-all">
               সরাসরি কল করুন
             </button>
