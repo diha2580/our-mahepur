@@ -4,7 +4,7 @@ import {
   Settings, Plus, Edit2, Trash2, Save, X, Phone, MapPin, 
   User, Mail, FileText, Calendar, MessageSquareText, Send, Loader2, 
   ShieldCheck, Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
-  Database, ArrowLeft 
+  Database, ArrowLeft, Camera
 } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
 import { formatPhoneForDialer } from '../lib/utils';
@@ -94,7 +94,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     switch (tab) {
       case 'eApplications': return { id: Date.now().toString(), title: '', link: '' };
       case 'districtOfficials': return { id: Date.now().toString(), name: '', designation: '', office: '', phone: '', email: '' };
-      case 'healthFacilities': return { id: Date.now().toString(), name: '', type: 'Government', location: '', phone: '', speciality: [] };
+      case 'healthFacilities': return { id: Date.now().toString(), name: '', type: 'Government', location: '', phone: '', speciality: [], doctors: [] };
       case 'touristSpots': return { id: Date.now().toString(), name: '', description: '', image: '', location: '' };
       case 'educationData': return { id: Date.now().toString(), name: '', type: 'School', location: '', phone: '' };
       case 'navItems': return { id: '', label: '', icon: 'Home' };
@@ -238,13 +238,141 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
       </div>
       {editingItem && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-in zoom-in duration-200 overflow-hidden text-black flex flex-col">
+          <div className={`bg-white rounded-3xl w-full ${activeTab === 'healthFacilities' ? 'max-w-2xl' : 'max-w-lg'} shadow-2xl animate-in zoom-in duration-200 overflow-hidden text-black flex flex-col`}>
             <div className="p-6 border-b border-gray-100 flex justify-between items-center shrink-0"><h4 className="text-xl font-bold">তথ্য সংশোধন/সংযোজন</h4><button onClick={() => setEditingItem(null)}><X className="w-6 h-6 text-gray-400" /></button></div>
             <div className="p-8 space-y-4 overflow-y-auto max-h-[70vh]">
               {activeTab === 'emergencyContacts' && (<><input placeholder="নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} /><input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} /><input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} /><select className="w-full p-3 border rounded-xl" value={editingItem.type} onChange={e => setEditingItem({...editingItem, type: e.target.value})}><option value="Fire">ফায়ার সার্ভিস</option><option value="Police">পুলিশ</option><option value="Ambulance">অ্যাম্বুলেন্স</option></select></>)}
               {activeTab === 'districtOfficials' && (<><input placeholder="নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} /><input placeholder="পদবি" className="w-full p-3 border rounded-xl" value={editingItem.designation} onChange={e => setEditingItem({...editingItem, designation: e.target.value})} /><input placeholder="অফিস" className="w-full p-3 border rounded-xl" value={editingItem.office} onChange={e => setEditingItem({...editingItem, office: e.target.value})} /><input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} /><input placeholder="ইমেইল" className="w-full p-3 border rounded-xl" value={editingItem.email} onChange={e => setEditingItem({...editingItem, email: e.target.value})} /></>)}
+              {activeTab === 'healthFacilities' && (
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <h5 className="font-bold text-blue-600 border-b pb-2">হাসপাতাল তথ্য</h5>
+                    <input placeholder="হাসপাতালের নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} />
+                    <input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} />
+                    <input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} />
+                    <select className="w-full p-3 border rounded-xl" value={editingItem.type} onChange={e => setEditingItem({...editingItem, type: e.target.value})}>
+                      <option value="Government">সরকারি</option>
+                      <option value="Private">বেসরকারি</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center border-b pb-2">
+                      <h5 className="font-bold text-blue-600">ডাক্তারদের তালিকা</h5>
+                      <button 
+                        onClick={() => {
+                          const newDoctor = { id: Date.now().toString(), name: '', phone: '', specialist: '', degree: '', viewingTime: '' };
+                          setEditingItem({ ...editingItem, doctors: [...(editingItem.doctors || []), newDoctor] });
+                        }}
+                        className="text-xs bg-blue-50 text-blue-600 px-3 py-1 rounded-lg font-bold hover:bg-blue-100"
+                      >
+                        + ডাক্তার যোগ করুন
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {(editingItem.doctors || []).map((doc: any, idx: number) => (
+                        <div key={doc.id} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 space-y-3 relative">
+                          <button 
+                            onClick={() => {
+                              const newDocs = editingItem.doctors.filter((_: any, i: number) => i !== idx);
+                              setEditingItem({ ...editingItem, doctors: newDocs });
+                            }}
+                            className="absolute top-2 right-2 text-red-400 hover:text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <input placeholder="ডাক্তারের নাম" className="w-full p-2 text-sm border rounded-lg" value={doc.name} onChange={e => {
+                            const newDocs = [...editingItem.doctors];
+                            newDocs[idx].name = e.target.value;
+                            setEditingItem({ ...editingItem, doctors: newDocs });
+                          }} />
+                          <div className="grid grid-cols-2 gap-2">
+                            <input placeholder="স্পেশালিস্ট" className="w-full p-2 text-sm border rounded-lg" value={doc.specialist} onChange={e => {
+                              const newDocs = [...editingItem.doctors];
+                              newDocs[idx].specialist = e.target.value;
+                              setEditingItem({ ...editingItem, doctors: newDocs });
+                            }} />
+                            <input placeholder="ডিগ্রি" className="w-full p-2 text-sm border rounded-lg" value={doc.degree} onChange={e => {
+                              const newDocs = [...editingItem.doctors];
+                              newDocs[idx].degree = e.target.value;
+                              setEditingItem({ ...editingItem, doctors: newDocs });
+                            }} />
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <input placeholder="ফোন" className="w-full p-2 text-sm border rounded-lg" value={doc.phone} onChange={e => {
+                              const newDocs = [...editingItem.doctors];
+                              newDocs[idx].phone = e.target.value;
+                              setEditingItem({ ...editingItem, doctors: newDocs });
+                            }} />
+                            <input placeholder="রোগী দেখার সময়" className="w-full p-2 text-sm border rounded-lg" value={doc.viewingTime} onChange={e => {
+                              const newDocs = [...editingItem.doctors];
+                              newDocs[idx].viewingTime = e.target.value;
+                              setEditingItem({ ...editingItem, doctors: newDocs });
+                            }} />
+                          </div>
+                        </div>
+                      ))}
+                      {(editingItem.doctors || []).length === 0 && (
+                        <p className="text-center text-xs text-gray-400 py-4">কোনো ডাক্তার যোগ করা হয়নি</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
               {activeTab === 'educationData' && (<><input placeholder="প্রতিষ্ঠানের নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} /><input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} /><input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} /><select className="w-full p-3 border rounded-xl" value={editingItem.type} onChange={e => setEditingItem({...editingItem, type: e.target.value})}><option value="School">স্কুল</option><option value="College">কলেজ</option><option value="University">বিশ্ববিদ্যালয়</option></select></>)}
               {activeTab === 'navItems' && (<><input placeholder="আইডি" className="w-full p-3 border rounded-xl" value={editingItem.id} onChange={e => setEditingItem({...editingItem, id: e.target.value})} /><input placeholder="লেবেল" className="w-full p-3 border rounded-xl" value={editingItem.label} onChange={e => setEditingItem({...editingItem, label: e.target.value})} /><input placeholder="আইকন" className="w-full p-3 border rounded-xl" value={editingItem.icon} onChange={e => setEditingItem({...editingItem, icon: e.target.value})} /></>)}
+              {activeTab === 'touristSpots' && (
+                <div className="space-y-4">
+                  <input placeholder="নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} />
+                  <textarea placeholder="বর্ণনা" className="w-full p-3 border rounded-xl" rows={3} value={editingItem.description} onChange={e => setEditingItem({...editingItem, description: e.target.value})} />
+                  <input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} />
+                  <input placeholder="অবদানকারী (ঐচ্ছিক)" className="w-full p-3 border rounded-xl" value={editingItem.contributor || ''} onChange={e => setEditingItem({...editingItem, contributor: e.target.value})} />
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-gray-500 flex items-center gap-2"><Camera className="w-4 h-4" /> ছবি আপলোড করুন</label>
+                    <input 
+                      type="file" 
+                      accept="image/*,video/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setEditingItem({
+                              ...editingItem, 
+                              image: reader.result as string,
+                              mediaType: file.type.startsWith('video') ? 'video' : 'image'
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full p-2 border rounded-xl text-sm"
+                    />
+                    {editingItem.image && (
+                      <div className="mt-2 relative w-full h-32 rounded-xl overflow-hidden border">
+                        {editingItem.mediaType === 'video' ? (
+                          <video src={editingItem.image || undefined} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={editingItem.image || undefined} className="w-full h-full object-cover" alt="Preview" />
+                        )}
+                        <button 
+                          onClick={() => setEditingItem({...editingItem, image: ''})}
+                          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+              {activeTab === 'eApplications' && (
+                <div className="space-y-4">
+                  <input placeholder="শিরোনাম" className="w-full p-3 border rounded-xl" value={editingItem.title} onChange={e => setEditingItem({...editingItem, title: e.target.value})} />
+                  <input placeholder="লিঙ্ক" className="w-full p-3 border rounded-xl" value={editingItem.link} onChange={e => setEditingItem({...editingItem, link: e.target.value})} />
+                </div>
+              )}
             </div>
             <div className="p-6 bg-gray-50 flex gap-3 shrink-0"><button onClick={() => setEditingItem(null)} className="flex-1 py-3 bg-white border rounded-xl font-bold">বাতিল</button><button onClick={saveEdit} className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">সেভ করুন</button></div>
           </div>

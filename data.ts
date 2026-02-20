@@ -55,9 +55,38 @@ export const districtOfficials: Official[] = [
 ];
 
 export const healthFacilities: Hospital[] = [
-  { id: '1', name: 'জেলা সদর হাসপাতাল', type: 'Government', location: 'হাসপাতাল মোড়', phone: '০১৭০০-০০০১১১', speciality: ['Medicine', 'Surgery', 'Pediatrics'] },
-  { id: '2', name: 'পপুলার ডায়াগনস্টিক', type: 'Private', location: 'কলেজ রোড', phone: '০১৮৯৯-২২৩৩৪৪', speciality: ['Pathology', 'X-Ray', 'Consultancy'] },
-  { id: '3', name: 'রেড ক্রিসেন্ট ব্লাড ব্যাংক', type: 'Government', location: 'শহর শাখা', phone: '০১৭২০-৯৯৮৮৭৭', speciality: ['Blood Donation'] }
+  { 
+    id: '1', 
+    name: 'জেলা সদর হাসপাতাল', 
+    type: 'Government', 
+    location: 'হাসপাতাল মোড়', 
+    phone: '০১৭০০-০০০১১১', 
+    speciality: ['Medicine', 'Surgery', 'Pediatrics'],
+    doctors: [
+      { id: 'd1', name: 'ডাঃ মোঃ আব্দুর রহমান', phone: '০১৭০০-১১২২৩৩', specialist: 'মেডিসিন বিশেষজ্ঞ', degree: 'MBBS, BCS (Health), FCPS', viewingTime: 'বিকাল ৪টা - রাত ৮টা' },
+      { id: 'd2', name: 'ডাঃ ফাতেমা জোহরা', phone: '০১৭০০-৪৪৫৫৬৬', specialist: 'স্ত্রী ও প্রসূতি রোগ বিশেষজ্ঞ', degree: 'MBBS, DGO, MCPS', viewingTime: 'সকাল ১০টা - দুপুর ২টা' }
+    ]
+  },
+  { 
+    id: '2', 
+    name: 'পপুলার ডায়াগনস্টিক', 
+    type: 'Private', 
+    location: 'কলেজ রোড', 
+    phone: '০১৮৯৯-২২৩৩৪৪', 
+    speciality: ['Pathology', 'X-Ray', 'Consultancy'],
+    doctors: [
+      { id: 'd3', name: 'ডাঃ এস. এম. কবির', phone: '০১৮৯৯-৭৭৮৮৯৯', specialist: 'হৃদরোগ বিশেষজ্ঞ', degree: 'MBBS, MD (Cardiology)', viewingTime: 'সন্ধ্যা ৬টা - রাত ৯টা' }
+    ]
+  },
+  { 
+    id: '3', 
+    name: 'রেড ক্রিসেন্ট ব্লাড ব্যাংক', 
+    type: 'Government', 
+    location: 'শহর শাখা', 
+    phone: '০১৭২০-৯৯৮৮৭৭', 
+    speciality: ['Blood Donation'],
+    doctors: []
+  }
 ];
 
 export const touristSpots: TouristPlace[] = [

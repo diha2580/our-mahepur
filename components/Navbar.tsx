@@ -76,7 +76,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
                     className="flex items-center gap-2 hover:bg-green-700 p-1.5 rounded-full pr-4 transition-colors bg-green-900/50"
                   >
-                    <img src={user.profilePic} className="w-8 h-8 rounded-full border border-green-400 bg-white/10" alt="Profile" />
+                    <img src={user.profilePic || undefined} className="w-8 h-8 rounded-full border border-green-400 bg-white/10" alt="Profile" />
                     <span className="text-sm font-bold max-w-[100px] truncate">{user.name}</span>
                   </button>
                   {showProfileMenu && (
@@ -130,7 +130,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
           <div className="px-3 pt-2 pb-6 space-y-1">
             {user && (
               <div className="flex items-center gap-4 px-4 py-5 border-b border-green-800 mb-3 bg-green-950/30 rounded-2xl mx-1">
-                <img src={user.profilePic} className="w-12 h-12 rounded-full border-2 border-green-400" alt="Profile" />
+                <img src={user.profilePic || undefined} className="w-12 h-12 rounded-full border-2 border-green-400" alt="Profile" />
                 <div>
                   <div className="font-black text-lg">{user.name}</div>
                   <div className="text-xs text-green-400 font-bold">{user.email}</div>

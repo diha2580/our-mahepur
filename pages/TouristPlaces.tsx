@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { MapPin, Info, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, PlayCircle, Film, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useRef, useMemo } from 'react';
+import { MapPin, Info, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, PlayCircle, Film, Image as ImageIcon, Search, Trash2 } from 'lucide-react';
 
 interface TouristPlacesProps {
   spots: any[];
@@ -10,9 +10,27 @@ interface TouristPlacesProps {
 
 const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSpot, setSelectedSpot] = useState<any>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [preview, setPreview] = useState<{ url: string, type: 'image' | 'video' } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const filteredSpots = useMemo(() => {
+    if (!searchQuery.trim()) return spots;
+    const query = searchQuery.toLowerCase();
+    return spots.filter(spot => 
+      spot.name.toLowerCase().includes(query) || 
+      spot.location.toLowerCase().includes(query) ||
+      spot.description.toLowerCase().includes(query)
+    );
+  }, [spots, searchQuery]);
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('আপনি কি নিশ্চিত যে এই পর্যটন কেন্দ্রটি ডিলিট করতে চান?')) {
+      onUpdate(spots.filter(s => s.id !== id));
+    }
+  };
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -90,27 +108,66 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
           ফিরে যান
         </button>
 
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all active:scale-95"
-        >
-          <Plus className="w-5 h-5" /> পর্যটন অভিজ্ঞতা শেয়ার করুন
-        </button>
+        {user?.role === 'Admin' && (
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all active:scale-95"
+          >
+            <Plus className="w-5 h-5" /> নতুন পর্যটন কেন্দ্র যোগ করুন
+          </button>
+        )}
       </div>
 
       <div className="mb-12 text-center max-w-3xl mx-auto">
         <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">মহেশপুরের সৌন্দর্য ও পর্যটন</h2>
-        <p className="text-gray-500 font-bold text-lg leading-relaxed">আপনার প্রিয় স্থানগুলোর ছবি ও ভিডিও শেয়ার করে পর্যটকদের সাহায্য করুন।</p>
+        <p className="text-gray-500 font-bold text-lg leading-relaxed mb-8">আপনার প্রিয় স্থানগুলোর ছবি ও ভিডিও শেয়ার করে পর্যটকদের সাহায্য করুন।</p>
+        
+        {/* Search Bar */}
+        <div className="relative max-w-xl mx-auto group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-orange-600 transition-colors w-5 h-5" />
+          <input 
+            type="text" 
+            placeholder="পর্যটন কেন্দ্র বা এলাকা খুঁজুন..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-14 pr-6 py-4 bg-white border border-gray-100 rounded-[2rem] outline-none focus:ring-4 focus:ring-orange-50 focus:border-orange-200 shadow-sm transition-all text-black font-medium"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery('')}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {(spots || []).map((spot) => (
-          <div key={spot.id} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col h-full">
-            <div className="relative aspect-video overflow-hidden bg-gray-900">
+        {filteredSpots.length > 0 ? (
+          filteredSpots.map((spot) => (
+            <div key={spot.id} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col h-full relative">
+            {/* Admin Delete Button */}
+            {user?.role === 'Admin' && (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(spot.id);
+                }}
+                className="absolute top-4 right-4 z-10 bg-red-500 text-white p-2 rounded-full shadow-lg hover:bg-red-600 transition-all active:scale-90"
+                title="ডিলিট করুন"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
+            <div 
+              className="relative aspect-video overflow-hidden bg-gray-900 cursor-pointer"
+              onClick={() => setSelectedSpot(spot)}
+            >
               {spot.mediaType === 'video' ? (
                 <div className="relative w-full h-full">
                   <video 
-                    src={spot.image} 
+                    src={spot.image || undefined} 
                     className="w-full h-full object-cover" 
                     muted 
                     loop 
@@ -131,7 +188,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                 </div>
               ) : (
                 <img 
-                  src={spot.image} 
+                  src={spot.image || undefined} 
                   alt={spot.name} 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
@@ -155,20 +212,36 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <div className="w-9 h-9 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}`} className="w-full h-full object-cover" alt="Avatar" />
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}` || null} className="w-full h-full object-cover" alt="Avatar" />
                    </div>
                    <div className="flex flex-col">
                       <span className="text-[10px] text-gray-400 font-bold uppercase leading-none mb-1">অবদানকারী</span>
                       <span className="text-xs font-black text-gray-700 leading-none">{spot.contributor || 'নাগরিক'}</span>
                    </div>
                 </div>
-                <button className="bg-orange-50 text-orange-600 p-3 rounded-xl hover:bg-orange-600 hover:text-white transition-all active:scale-90">
-                  <ArrowRight className="w-5 h-5" />
+                <button 
+                  onClick={() => setSelectedSpot(spot)}
+                  className="bg-orange-50 text-orange-600 px-4 py-2 rounded-xl hover:bg-orange-600 hover:text-white transition-all active:scale-95 flex items-center gap-2 text-xs font-bold"
+                >
+                  <span>বিস্তারিত দেখুন</span>
+                  <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+          <div className="col-span-full py-20 text-center bg-white rounded-[3rem] border-2 border-dashed border-gray-100">
+             <Search className="w-16 h-16 text-gray-200 mx-auto mb-4" />
+             <p className="text-gray-400 font-bold text-xl">দুঃখিত, কোনো পর্যটন কেন্দ্র খুঁজে পাওয়া যায়নি।</p>
+             <button 
+               onClick={() => setSearchQuery('')}
+               className="mt-4 text-orange-600 font-bold hover:underline"
+             >
+               সব পর্যটন কেন্দ্র দেখুন
+             </button>
+          </div>
+        )}
       </div>
 
       {/* Contribution Modal */}
@@ -251,9 +324,9 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   ) : preview ? (
                     <div className="relative w-full h-full p-4 animate-in fade-in zoom-in duration-500">
                       {preview.type === 'video' ? (
-                        <video src={preview.url} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" autoPlay muted loop />
+                        <video src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" autoPlay muted loop />
                       ) : (
-                        <img src={preview.url} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" alt="Preview" />
+                        <img src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" alt="Preview" />
                       )}
                       <div className="absolute top-6 right-6 flex gap-2">
                          <div className="bg-black/70 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-black text-white flex items-center gap-1">
@@ -306,6 +379,60 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Detail View Modal */}
+      {selectedSpot && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[3rem] w-full max-w-4xl shadow-2xl animate-in zoom-in duration-300 overflow-hidden text-black flex flex-col max-h-[90vh]">
+            <div className="relative h-64 md:h-96 bg-gray-900">
+              {selectedSpot.mediaType === 'video' ? (
+                <video src={selectedSpot.image || undefined} className="w-full h-full object-cover" controls autoPlay />
+              ) : (
+                <img src={selectedSpot.image || undefined} className="w-full h-full object-cover" alt={selectedSpot.name} />
+              )}
+              <button 
+                onClick={() => setSelectedSpot(null)}
+                className="absolute top-6 right-6 bg-black/50 hover:bg-black/70 p-3 rounded-full text-white transition-all shadow-xl"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="absolute bottom-6 left-6">
+                <span className="bg-orange-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">
+                  {selectedSpot.location}
+                </span>
+              </div>
+            </div>
+            
+            <div className="p-8 md:p-12 overflow-y-auto">
+              <div className="flex items-center gap-3 mb-4">
+                 <div className="h-1.5 w-12 bg-orange-500 rounded-full"></div>
+                 <span className="text-xs font-black text-gray-400 uppercase tracking-widest">বিস্তারিত তথ্য</span>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">{selectedSpot.name}</h3>
+              <p className="text-lg text-gray-600 leading-relaxed font-medium mb-10 whitespace-pre-wrap">
+                {selectedSpot.description}
+              </p>
+              
+              <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                   <div className="w-14 h-14 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
+                   </div>
+                   <div className="flex flex-col">
+                      <span className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">তথ্য প্রদানকারী</span>
+                      <span className="text-xl font-black text-gray-800">{selectedSpot.contributor || 'অজ্ঞাত নাগরিক'}</span>
+                   </div>
+                </div>
+                <button 
+                  onClick={() => setSelectedSpot(null)}
+                  className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-black transition-all active:scale-95 shadow-xl shadow-gray-200"
+                >
+                  বন্ধ করুন
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

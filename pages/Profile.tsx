@@ -88,7 +88,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
         <div className="lg:col-span-1">
           <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center sticky top-24">
             <div className="relative inline-block mb-6">
-              <img src={isEditing ? formData.profile_pic : user.profile_pic} className="w-32 h-32 rounded-full border-4 border-green-50 object-cover bg-gray-50 shadow-md mx-auto" alt="Profile" />
+              <img src={(isEditing ? formData.profile_pic : user.profile_pic) || null} className="w-32 h-32 rounded-full border-4 border-green-50 object-cover bg-gray-50 shadow-md mx-auto" alt="Profile" />
               {isEditing && <button onClick={() => fileInputRef.current?.click()} className="absolute bottom-0 right-0 bg-green-600 text-white p-2.5 rounded-full shadow-lg hover:scale-110 transition-transform"><Camera className="w-5 h-5 text-white" /></button>}
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
             </div>

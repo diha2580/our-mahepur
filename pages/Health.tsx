@@ -16,65 +16,31 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
 
-  // Mock Doctor Data - Linked to available facilities
-  const doctors = useMemo(() => [
-    { 
-      id: 'd1', 
-      name: 'ডাঃ তৌহিদুর রহমান', 
-      specialty: 'Medicine', 
-      degree: 'MBBS, BCS (Health), FCPS (Medicine)', 
-      hospitalId: '1', 
-      time: '০৪:০০ - ০৮:০০', 
-      days: 'শনি - বৃহস্পতি',
-      bio: 'ডাঃ তৌহিদুর রহমান একজন অভিজ্ঞ মেডিসিন বিশেষজ্ঞ। তিনি দীর্ঘ ১০ বছর ধরে সরকারি ও বেসরকারি পর্যায়ে চিকিৎসা সেবা প্রদান করছেন।'
-    },
-    { 
-      id: 'd2', 
-      name: 'ডাঃ মেহজাবিন আলম', 
-      specialty: 'Pediatrics', 
-      degree: 'MBBS, DCH (BSMMU), FCPS (Pediatrics)', 
-      hospitalId: '1', 
-      time: '০৫:০০ - ০৭:০০', 
-      days: 'রবি, মঙ্গল, বৃহস্পতি',
-      bio: 'শিশুরোগ বিশেষজ্ঞ হিসেবে ডাঃ মেহজাবিন আলম অত্যন্ত সুপরিচিত। তিনি শিশুদের শারীরিক ও মানসিক বিকাশে বিশেষ গুরুত্ব দিয়ে থাকেন।'
-    },
-    { 
-      id: 'd3', 
-      name: 'ডাঃ আসাদুজ্জামান', 
-      specialty: 'Surgery', 
-      degree: 'MBBS, MS (General Surgery), FRCS', 
-      hospitalId: '2', 
-      time: '০৬:০০ - ০৯:০০', 
-      days: 'প্রতিদিন',
-      bio: 'জেনারেল সার্জন হিসেবে ডাঃ আসাদুজ্জামান অসংখ্য সফল অপারেশন সম্পন্ন করেছেন। তিনি আধুনিক সার্জিক্যাল পদ্ধতিতে পারদর্শী।'
-    },
-    { 
-      id: 'd4', 
-      name: 'ডাঃ ফারজানা ইয়াসমিন', 
-      specialty: 'Gynecology', 
-      degree: 'MBBS, FCPS (Gynae), DGO', 
-      hospitalId: '2', 
-      time: '০৪:৩০ - ০৭:৩০', 
-      days: 'শনি, সোম, বুধ',
-      bio: 'স্ত্রী ও প্রসূতি রোগ বিশেষজ্ঞ ডাঃ ফারজানা ইয়াসমিন মাতৃত্বকালীন স্বাস্থ্য ও নারী স্বাস্থ্য সচেতনতায় কাজ করছেন।'
-    },
-    { 
-      id: 'd5', 
-      name: 'ডাঃ শাহরিয়ার আহমেদ', 
-      specialty: 'Pathology', 
-      degree: 'MBBS, MD (Pathology), DCP', 
-      hospitalId: '2', 
-      time: '১০:০০ - ০২:০০', 
-      days: 'শনি - বৃহস্পতি',
-      bio: 'প্যাথলজি বিশেষজ্ঞ হিসেবে ডাঃ শাহরিয়ার আহমেদ নির্ভুল রোগ নির্ণয়ে সহায়তা করেন। তিনি আধুনিক ল্যাবরেটরি প্রযুক্তিতে অভিজ্ঞ।'
-    },
-  ], []);
+  // Derive Doctor Data from facilities
+  const doctors = useMemo(() => {
+    const allDoctors: any[] = [];
+    facilities.forEach(h => {
+      if (h.doctors && Array.isArray(h.doctors)) {
+        h.doctors.forEach((d: any) => {
+          allDoctors.push({
+            ...d,
+            hospitalId: h.id,
+            specialty: d.specialist // Map specialist to specialty for consistency with existing UI
+          });
+        });
+      }
+    });
+    return allDoctors;
+  }, [facilities]);
 
   // Extract unique specialties
   const allSpecialties = useMemo(() => {
     const specs = new Set<string>();
     facilities.forEach(h => h.speciality?.forEach((s: string) => specs.add(s)));
-    doctors.forEach(d => specs.add(d.specialty));
+    doctors.forEach(d => {
+      if (d.specialist) specs.add(d.specialist);
+      if (d.specialty) specs.add(d.specialty);
+    });
     return ['All', ...Array.from(specs)];
   }, [facilities, doctors]);
 
@@ -92,20 +58,11 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
     const matchesSpecialty = selectedSpecialty === 'All' || d.specialty === selectedSpecialty;
     const matchesHospital = selectedHospitalId === 'All' || d.hospitalId === selectedHospitalId;
     
-    let matchesAvailability = true;
-    if (selectedAvailability === 'Weekdays') {
-      matchesAvailability = d.days.includes('শনি - বৃহস্পতি') || d.days.includes('প্রতিদিন');
-    } else if (selectedAvailability === 'Weekends') {
-      matchesAvailability = d.days.includes('প্রতিদিন') || d.days.includes('শুক্র');
-    } else if (selectedAvailability === 'Specific days') {
-      matchesAvailability = d.days.includes(',') && !d.days.includes('প্রতিদিন');
-    }
-
     const matchesSearch = 
       d.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
       d.specialty.toLowerCase().includes(searchQuery.toLowerCase()) ||
       hospital?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSpecialty && matchesHospital && matchesAvailability && matchesSearch;
+    return matchesSpecialty && matchesHospital && matchesSearch;
   });
 
   const clearSearch = () => setSearchQuery('');
@@ -247,33 +204,6 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                     ))}
                   </div>
                 </div>
-
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-3 ml-1">
-                    <CalendarCheck className="w-3.5 h-3.5 text-amber-600" />
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">উপলব্ধতা অনুযায়ী</p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { id: 'All', label: 'সব দিন' },
-                      { id: 'Weekdays', label: 'কর্মদিবস' },
-                      { id: 'Weekends', label: 'ছুটির দিন' },
-                      { id: 'Specific days', label: 'নির্দিষ্ট দিন' }
-                    ].map((opt) => (
-                      <button
-                        key={opt.id}
-                        onClick={() => setSelectedAvailability(opt.id)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                          selectedAvailability === opt.id 
-                            ? 'bg-amber-600 border-amber-600 text-white shadow-md' 
-                            : 'bg-white border-gray-100 text-gray-500 hover:border-amber-200 hover:text-amber-600'
-                        }`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
           </div>
@@ -344,7 +274,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                   <div className="flex items-center gap-5 mb-6">
                     <div className="relative">
                       <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 border-2 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform duration-500">
-                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}`} className="w-full h-full object-cover" alt={doctor.name} />
+                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}` || null} className="w-full h-full object-cover" alt={doctor.name} />
                       </div>
                       <div className="absolute -bottom-2 -right-2 bg-blue-600 p-1.5 rounded-lg border-2 border-white shadow-lg">
                         <ShieldCheck className="w-3 h-3 text-white" />
@@ -373,23 +303,16 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                        <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
                           <div className="flex items-center gap-1.5 text-gray-400 mb-1">
                              <Clock className="w-3 h-3" />
-                             <span className="text-[9px] font-black uppercase tracking-widest">সময়</span>
+                             <span className="text-[9px] font-black uppercase tracking-widest">রোগী দেখার সময়</span>
                           </div>
-                          <span className="text-xs font-bold text-gray-700">{doctor.time}</span>
-                       </div>
-                       <div className="bg-gray-50 p-3 rounded-2xl border border-gray-100">
-                          <div className="flex items-center gap-1.5 text-gray-400 mb-1">
-                             <CalendarCheck className="w-3 h-3" />
-                             <span className="text-[9px] font-black uppercase tracking-widest">দিন</span>
-                          </div>
-                          <span className="text-xs font-bold text-gray-700">{doctor.days}</span>
+                          <span className="text-xs font-bold text-gray-700">{doctor.viewingTime}</span>
                        </div>
                     </div>
                   </div>
 
                   <div className="flex gap-3">
                     <a 
-                      href={`tel:${formatPhoneForDialer(hospital?.phone || '')}`}
+                      href={`tel:${formatPhoneForDialer(doctor.phone || '')}`}
                       className="flex-1 bg-green-600 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-2 shadow-lg shadow-green-100 hover:bg-green-700 transition-all active:scale-95"
                     >
                       <Phone className="w-4 h-4" /> কল করুন
@@ -425,7 +348,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
               <div className="flex items-center gap-6 translate-y-12">
                 <div className="w-32 h-32 rounded-3xl bg-white p-1 shadow-2xl">
                   <img 
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}`} 
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}` || null} 
                     className="w-full h-full rounded-[1.4rem] object-cover bg-green-50" 
                     alt={selectedDoctor.name} 
                   />
@@ -463,14 +386,14 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                     <div className="bg-amber-50 p-3 rounded-2xl text-amber-600"><Clock className="w-6 h-6" /></div>
                     <div>
                       <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">রোগী দেখার সময়</p>
-                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.time}</p>
+                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.viewingTime}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
-                    <div className="bg-green-50 p-3 rounded-2xl text-green-600"><CalendarCheck className="w-6 h-6" /></div>
+                    <div className="bg-green-50 p-3 rounded-2xl text-green-600"><Phone className="w-6 h-6" /></div>
                     <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">উপলব্ধ দিনসমূহ</p>
-                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.days}</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">সরাসরি সিরিয়াল</p>
+                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.phone}</p>
                     </div>
                   </div>
                 </div>

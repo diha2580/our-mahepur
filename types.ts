@@ -26,6 +26,15 @@ export interface Official {
   email: string;
 }
 
+export interface Doctor {
+  id: string;
+  name: string;
+  phone: string;
+  specialist: string;
+  degree: string;
+  viewingTime: string;
+}
+
 export interface Hospital {
   id: string;
   name: string;
@@ -33,6 +42,7 @@ export interface Hospital {
   location: string;
   phone: string;
   speciality: string[];
+  doctors?: Doctor[];
 }
 
 export interface TouristPlace {
