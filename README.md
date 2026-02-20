@@ -1,20 +1,44 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Moheshpur Digital Portal
 
-# Run and deploy your AI Studio app
+A comprehensive digital service portal for Moheshpur Upazila, built with React, Vite, Tailwind CSS, and Supabase.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/4c97f5e1-0df5-4e81-9ea1-ec8f043df8b7
+- **Emergency Services**: Quick access to fire, police, and ambulance contacts.
+- **Directory**: Contact information for district and upazila officials.
+- **Health Services**: Information about government and private health facilities.
+- **Tourist Spots**: Explore local attractions with images and descriptions.
+- **E-Applications**: Direct links to various government online services.
+- **Complaint Box**: Securely submit complaints to the administration.
+- **Admin Panel**: Real-time management of portal data via Supabase.
+- **Role-based Auth**: Secure login system with Admin and User roles.
 
-## Run Locally
+## Deployment on Vercel
 
-**Prerequisites:**  Node.js
+To deploy this project on Vercel, follow these steps:
 
+1. **Push to GitHub**: Push your code to a GitHub repository.
+2. **Import to Vercel**: Go to [vercel.com](https://vercel.com) and import your repository.
+3. **Configure Environment Variables**:
+   In the Vercel project settings, add the following environment variables:
+   - `VITE_SUPABASE_URL`: Your Supabase Project URL.
+   - `VITE_SUPABASE_ANON_KEY`: Your Supabase Anonymous API Key.
+4. **Deploy**: Vercel will automatically detect the Vite configuration and deploy the app.
+
+## Local Development
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+2. Set up environment variables in a `.env` file (refer to `.env.example`).
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Tech Stack
+
+- **Frontend**: React 19, Vite, Tailwind CSS, Lucide React.
+- **Backend**: Supabase (Auth, Database, Real-time).
+- **State Management**: Custom Observer Pattern with Supabase sync.
