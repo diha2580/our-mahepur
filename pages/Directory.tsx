@@ -21,6 +21,7 @@ const Directory: React.FC<DirectoryProps> = ({ officials, onBack }) => {
     <div className="animate-in slide-in-from-top duration-500">
       <button 
         onClick={onBack}
+        aria-label="আগের পৃষ্ঠায় ফিরে যান"
         className="mb-6 flex items-center gap-2 text-gray-500 hover:text-blue-600 font-bold transition-colors group"
       >
         <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-blue-50 transition-colors">
@@ -81,7 +82,7 @@ const Directory: React.FC<DirectoryProps> = ({ officials, onBack }) => {
                    </div>
                 </td>
                 <td className="px-6 py-5 text-right">
-                  <a href={`tel:${formatPhoneForDialer(official.phone)}`} className="inline-flex p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all shadow-sm">
+                  <a href={`tel:${formatPhoneForDialer(official.phone)}`} aria-label={`${official.name} কে কল করুন`} className="inline-flex p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all shadow-sm">
                     <Phone className="w-4 h-4" />
                   </a>
                 </td>

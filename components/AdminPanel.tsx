@@ -4,8 +4,9 @@ import {
   Settings, Plus, Edit2, Trash2, Save, X, Phone, MapPin, 
   User, Mail, FileText, Calendar, MessageSquareText, Send, Loader2, 
   ShieldCheck, Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
-  Database, ArrowLeft, Camera
+  Database, ArrowLeft, Camera, Droplets, Pill
 } from 'lucide-react';
+import VideoPlayer from './VideoPlayer';
 import { GoogleGenAI } from "@google/genai";
 import { formatPhoneForDialer } from '../lib/utils';
 
@@ -98,6 +99,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
       case 'touristSpots': return { id: Date.now().toString(), name: '', description: '', image: '', location: '' };
       case 'educationData': return { id: Date.now().toString(), name: '', type: 'School', location: '', phone: '' };
       case 'navItems': return { id: '', label: '', icon: 'Home' };
+      case 'bloodDonors': return { id: Date.now().toString(), name: '', bloodGroup: 'O+', phone: '', location: '', lastDonationDate: new Date().toISOString().split('T')[0], isAvailable: true };
+      case 'pharmacies': return { id: Date.now().toString(), name: '', location: '', phone: '', isOpen24Hours: false, deliveryAvailable: false };
       default: return { id: Date.now().toString(), name: '', phone: '', location: '', type: 'Fire' };
     }
   };
@@ -120,6 +123,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     { id: 'healthFacilities', label: 'স্বাস্থ্য সেবা', icon: HeartPulse },
     { id: 'educationData', label: 'শিক্ষা', icon: GraduationCap },
     { id: 'touristSpots', label: 'পর্যটন', icon: MapPin },
+    { id: 'bloodDonors', label: 'রক্তদান', icon: Droplets },
+    { id: 'pharmacies', label: 'ফার্মেসি', icon: Pill },
     { id: 'eApplications', label: 'ই-আবেদন', icon: FileText },
     { id: 'navItems', label: 'মেনু বার', icon: Layout },
     { id: 'contactInfo', label: 'যোগাযোগ তথ্য', icon: Phone },
@@ -336,12 +341,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
+                          const type = file.type.startsWith('video') ? 'video' : 'image';
+                          const maxSize = type === 'video' ? 5 * 1024 * 1024 : 2 * 1024 * 1024;
+                          
+                          if (file.size > maxSize) {
+                            alert(`ফাইলের আকার ${type === 'video' ? '৫' : '২'} মেগাবাইটের কম হতে হবে।`);
+                            return;
+                          }
+
                           const reader = new FileReader();
                           reader.onloadend = () => {
                             setEditingItem({
                               ...editingItem, 
                               image: reader.result as string,
-                              mediaType: file.type.startsWith('video') ? 'video' : 'image'
+                              mediaType: type
                             });
                           };
                           reader.readAsDataURL(file);
@@ -352,7 +365,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                     {editingItem.image && (
                       <div className="mt-2 relative w-full h-32 rounded-xl overflow-hidden border">
                         {editingItem.mediaType === 'video' ? (
-                          <video src={editingItem.image || undefined} className="w-full h-full object-cover" />
+                          <VideoPlayer src={editingItem.image || ''} className="w-full h-full" />
                         ) : (
                           <img src={editingItem.image || undefined} className="w-full h-full object-cover" alt="Preview" />
                         )}
@@ -364,6 +377,47 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                         </button>
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+              {activeTab === 'bloodDonors' && (
+                <div className="space-y-4">
+                  <input placeholder="দাতার নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <select className="w-full p-3 border rounded-xl" value={editingItem.bloodGroup} onChange={e => setEditingItem({...editingItem, bloodGroup: e.target.value})}>
+                      {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(group => (
+                        <option key={group} value={group}>{group}</option>
+                      ))}
+                    </select>
+                    <input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} />
+                  </div>
+                  <input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                      <label className="text-xs font-bold text-gray-400">সর্বশেষ রক্তদানের তারিখ</label>
+                      <input type="date" className="w-full p-3 border rounded-xl" value={editingItem.lastDonationDate} onChange={e => setEditingItem({...editingItem, lastDonationDate: e.target.value})} />
+                    </div>
+                    <div className="flex items-center gap-2 pt-6">
+                      <input type="checkbox" id="isAvailable" checked={editingItem.isAvailable} onChange={e => setEditingItem({...editingItem, isAvailable: e.target.checked})} className="w-5 h-5" />
+                      <label htmlFor="isAvailable" className="font-bold">উপলব্ধ আছেন?</label>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {activeTab === 'pharmacies' && (
+                <div className="space-y-4">
+                  <input placeholder="ফার্মেসির নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} />
+                  <input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} />
+                  <input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="isOpen24Hours" checked={editingItem.isOpen24Hours} onChange={e => setEditingItem({...editingItem, isOpen24Hours: e.target.checked})} className="w-5 h-5" />
+                      <label htmlFor="isOpen24Hours" className="font-bold">২৪ ঘণ্টা খোলা?</label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="checkbox" id="deliveryAvailable" checked={editingItem.deliveryAvailable} onChange={e => setEditingItem({...editingItem, deliveryAvailable: e.target.checked})} className="w-5 h-5" />
+                      <label htmlFor="deliveryAvailable" className="font-bold">ডেলিভারি সুবিধা?</label>
+                    </div>
                   </div>
                 </div>
               )}

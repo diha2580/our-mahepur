@@ -1,5 +1,6 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { MapPin, Info, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, PlayCircle, Film, Image as ImageIcon, Search, Trash2 } from 'lucide-react';
+import { MapPin, Info, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, PlayCircle, Film, Image as ImageIcon, Search, Trash2, ShieldCheck } from 'lucide-react';
+import VideoPlayer from '../components/VideoPlayer';
 
 interface TouristPlacesProps {
   spots: any[];
@@ -100,6 +101,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <button 
           onClick={onBack}
+          aria-label="আগের পৃষ্ঠায় ফিরে যান"
           className="flex items-center gap-2 text-gray-500 hover:text-orange-600 font-bold transition-colors group"
         >
           <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-orange-50 transition-colors">
@@ -135,6 +137,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery('')}
+              aria-label="অনুসন্ধান মুছুন"
               className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors"
             >
               <X className="w-5 h-5" />
@@ -163,6 +166,8 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
             <div 
               className="relative aspect-video overflow-hidden bg-gray-900 cursor-pointer"
               onClick={() => setSelectedSpot(spot)}
+              role="button"
+              aria-label={`${spot.name} এর বিস্তারিত দেখুন`}
             >
               {spot.mediaType === 'video' ? (
                 <div className="relative w-full h-full">
@@ -212,7 +217,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <div className="w-9 h-9 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}` || null} className="w-full h-full object-cover" alt="Avatar" />
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
                    </div>
                    <div className="flex flex-col">
                       <span className="text-[10px] text-gray-400 font-bold uppercase leading-none mb-1">অবদানকারী</span>
@@ -258,7 +263,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   <p className="text-sm text-gray-500 font-bold">ছবি বা ভিডিও আপলোড করুন</p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="bg-white p-3 rounded-full shadow-sm hover:bg-red-50 hover:text-red-600 transition-all">
+              <button onClick={() => setIsModalOpen(false)} className="bg-white p-3 rounded-full shadow-sm hover:bg-red-50 hover:text-red-600 transition-all" aria-label="বন্ধ করুন">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -324,11 +329,11 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   ) : preview ? (
                     <div className="relative w-full h-full p-4 animate-in fade-in zoom-in duration-500">
                       {preview.type === 'video' ? (
-                        <video src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" autoPlay muted loop />
+                        <VideoPlayer src={preview.url || ''} className="w-full max-h-[300px]" autoPlay />
                       ) : (
                         <img src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" alt="Preview" />
                       )}
-                      <div className="absolute top-6 right-6 flex gap-2">
+                      <div className="absolute top-6 right-6 flex gap-2 z-10">
                          <div className="bg-black/70 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-black text-white flex items-center gap-1">
                             {preview.type === 'video' ? <Video className="w-3 h-3" /> : <Camera className="w-3 h-3" />}
                             {preview.type.toUpperCase()}
@@ -384,53 +389,74 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
       )}
       {/* Detail View Modal */}
       {selectedSpot && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-white rounded-[3rem] w-full max-w-4xl shadow-2xl animate-in zoom-in duration-300 overflow-hidden text-black flex flex-col max-h-[90vh]">
-            <div className="relative h-64 md:h-96 bg-gray-900">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-2xl z-[200] flex items-center justify-center p-4 md:p-8 animate-in fade-in duration-500">
+          <div className="bg-white rounded-[3.5rem] w-full max-w-6xl shadow-[0_50px_100px_rgba(0,0,0,0.3)] animate-in zoom-in slide-in-from-bottom-12 duration-700 overflow-hidden text-black flex flex-col md:flex-row h-full max-h-[85vh]">
+            {/* Media Section */}
+            <div className="relative w-full md:w-1/2 h-64 md:h-auto bg-gray-900 overflow-hidden group">
               {selectedSpot.mediaType === 'video' ? (
-                <video src={selectedSpot.image || undefined} className="w-full h-full object-cover" controls autoPlay />
+                <VideoPlayer src={selectedSpot.image || ''} className="w-full h-full" autoPlay />
               ) : (
-                <img src={selectedSpot.image || undefined} className="w-full h-full object-cover" alt={selectedSpot.name} />
+                <img src={selectedSpot.image || undefined} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={selectedSpot.name} />
               )}
-              <button 
-                onClick={() => setSelectedSpot(null)}
-                className="absolute top-6 right-6 bg-black/50 hover:bg-black/70 p-3 rounded-full text-white transition-all shadow-xl"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <div className="absolute bottom-6 left-6">
-                <span className="bg-orange-600 text-white px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-xl">
-                  {selectedSpot.location}
-                </span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              <div className="absolute bottom-8 left-8 flex items-center gap-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="bg-orange-600 p-3 rounded-2xl shadow-2xl">
+                  <MapPin className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-white font-black text-xl drop-shadow-lg">{selectedSpot.location}</span>
               </div>
             </div>
             
-            <div className="p-8 md:p-12 overflow-y-auto">
-              <div className="flex items-center gap-3 mb-4">
-                 <div className="h-1.5 w-12 bg-orange-500 rounded-full"></div>
-                 <span className="text-xs font-black text-gray-400 uppercase tracking-widest">বিস্তারিত তথ্য</span>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-black text-gray-900 mb-6">{selectedSpot.name}</h3>
-              <p className="text-lg text-gray-600 leading-relaxed font-medium mb-10 whitespace-pre-wrap">
-                {selectedSpot.description}
-              </p>
-              
-              <div className="bg-gray-50 p-8 rounded-[2rem] border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                   <div className="w-14 h-14 rounded-2xl bg-white border-2 border-gray-100 flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
-                   </div>
-                   <div className="flex flex-col">
-                      <span className="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">তথ্য প্রদানকারী</span>
-                      <span className="text-xl font-black text-gray-800">{selectedSpot.contributor || 'অজ্ঞাত নাগরিক'}</span>
-                   </div>
+            {/* Content Section */}
+            <div className="w-full md:w-1/2 flex flex-col h-full bg-white relative">
+              <button 
+                onClick={() => setSelectedSpot(null)}
+                className="absolute top-8 right-8 z-10 bg-gray-100 hover:bg-red-50 p-4 rounded-full text-gray-400 hover:text-red-500 transition-all shadow-sm active:scale-90"
+                aria-label="বন্ধ করুন"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
+              <div className="flex-grow overflow-y-auto p-8 md:p-16 custom-scrollbar">
+                <div className="flex items-center gap-4 mb-8">
+                   <div className="h-1 w-16 bg-orange-600 rounded-full"></div>
+                   <span className="text-[10px] font-black text-orange-600 uppercase tracking-[0.3em]">Spot Details</span>
                 </div>
-                <button 
-                  onClick={() => setSelectedSpot(null)}
-                  className="bg-gray-900 text-white px-8 py-4 rounded-2xl font-black text-sm hover:bg-black transition-all active:scale-95 shadow-xl shadow-gray-200"
-                >
-                  বন্ধ করুন
-                </button>
+                
+                <h3 className="text-4xl md:text-6xl font-black text-gray-900 mb-8 leading-[0.9] tracking-tighter">
+                  {selectedSpot.name}
+                </h3>
+                
+                <div className="prose prose-orange max-w-none">
+                  <p className="text-xl text-gray-600 leading-relaxed font-medium mb-12 whitespace-pre-wrap">
+                    {selectedSpot.description}
+                  </p>
+                </div>
+
+                <div className="bg-gray-50/50 p-10 rounded-[3rem] border border-gray-100 flex flex-col gap-8">
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                       <div className="w-20 h-20 rounded-3xl bg-white border-2 border-gray-100 flex items-center justify-center text-orange-600 overflow-hidden shadow-xl">
+                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
+                       </div>
+                       <div className="absolute -bottom-2 -right-2 bg-green-500 p-1.5 rounded-xl border-4 border-white shadow-lg">
+                          <ShieldCheck className="w-4 h-4 text-white" />
+                       </div>
+                    </div>
+                    <div className="flex flex-col">
+                       <span className="text-[10px] text-gray-400 font-black uppercase tracking-widest mb-1">তথ্য প্রদানকারী</span>
+                       <span className="text-2xl font-black text-gray-900">{selectedSpot.contributor || 'অজ্ঞাত নাগরিক'}</span>
+                       <span className="text-xs text-green-600 font-bold">ভেরিফাইড কন্ট্রিবিউটর</span>
+                    </div>
+                  </div>
+                  
+                  <button 
+                    onClick={() => setSelectedSpot(null)}
+                    className="w-full bg-gray-900 text-white py-5 rounded-[1.5rem] font-black text-lg hover:bg-black transition-all active:scale-[0.98] shadow-2xl shadow-gray-200 flex items-center justify-center gap-3"
+                  >
+                    ফিরে যান
+                  </button>
+                </div>
               </div>
             </div>
           </div>

@@ -1,14 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { HeartPulse, MapPin, Phone, Hospital as HospIcon, UserRound, Search, ChevronRight, X, ArrowLeft, Stethoscope, Clock, CalendarCheck, ShieldCheck, Filter } from 'lucide-react';
+import { HeartPulse, MapPin, Phone, Hospital as HospIcon, UserRound, Search, ChevronRight, X, ArrowLeft, Stethoscope, Clock, CalendarCheck, ShieldCheck, Filter, LayoutDashboard, Pill, Activity } from 'lucide-react';
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface HealthProps {
   facilities: any[];
+  pharmacies: any[];
   onBack: () => void;
 }
 
-const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
-  const [viewMode, setViewMode] = useState<'hospitals' | 'doctors'>('hospitals');
+const Health: React.FC<HealthProps> = ({ facilities, pharmacies, onBack }) => {
+  const [viewMode, setViewMode] = useState<'dashboard' | 'hospitals' | 'doctors'>('dashboard');
   const [filter, setFilter] = useState('All');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
   const [selectedHospitalId, setSelectedHospitalId] = useState('All');
@@ -73,6 +74,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
         <div className="flex items-center gap-4">
           <button 
             onClick={onBack}
+            aria-label="আগের পৃষ্ঠায় ফিরে যান"
             className="flex items-center gap-2 text-gray-500 hover:text-green-600 font-bold transition-colors group"
           >
             <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-green-50 transition-colors">
@@ -91,13 +93,22 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
         {/* View Mode Toggle */}
         <div className="flex bg-gray-100 p-1.5 rounded-2xl w-full md:w-auto">
           <button 
+            onClick={() => { setViewMode('dashboard'); clearSearch(); }}
+            aria-pressed={viewMode === 'dashboard'}
+            className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${viewMode === 'dashboard' ? 'bg-white text-green-700 shadow-md' : 'text-gray-500 hover:bg-gray-200'}`}
+          >
+            <LayoutDashboard className="w-4 h-4" /> ড্যাশবোর্ড
+          </button>
+          <button 
             onClick={() => { setViewMode('hospitals'); setSelectedHospitalId('All'); clearSearch(); }}
+            aria-pressed={viewMode === 'hospitals'}
             className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${viewMode === 'hospitals' ? 'bg-white text-green-700 shadow-md' : 'text-gray-500 hover:bg-gray-200'}`}
           >
             <HospIcon className="w-4 h-4" /> হাসপাতাল
           </button>
           <button 
             onClick={() => { setViewMode('doctors'); setSelectedHospitalId('All'); clearSearch(); }}
+            aria-pressed={viewMode === 'doctors'}
             className={`flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${viewMode === 'doctors' ? 'bg-white text-green-700 shadow-md' : 'text-gray-500 hover:bg-gray-200'}`}
           >
             <UserRound className="w-4 h-4" /> বিশেষজ্ঞ ডাক্তার
@@ -119,7 +130,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                 className="pl-12 pr-10 py-4 bg-gray-50 border border-gray-100 rounded-2xl outline-none focus:ring-4 focus:ring-green-50 focus:bg-white transition-all w-full text-black font-medium"
               />
               {searchQuery && (
-                <button onClick={clearSearch} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors">
+                <button onClick={clearSearch} aria-label="অনুসন্ধান মুছুন" className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors">
                   <X className="w-5 h-5" />
                 </button>
               )}
@@ -210,7 +221,128 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
         </div>
       </div>
 
-      {viewMode === 'hospitals' ? (
+      {viewMode === 'dashboard' ? (
+        <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-6">
+              <div className="bg-green-50 p-4 rounded-2xl text-green-600"><HospIcon className="w-8 h-8" /></div>
+              <div>
+                <div className="text-3xl font-black text-gray-900">{facilities.length}</div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">হাসপাতাল</div>
+              </div>
+            </div>
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-6">
+              <div className="bg-blue-50 p-4 rounded-2xl text-blue-600"><UserRound className="w-8 h-8" /></div>
+              <div>
+                <div className="text-3xl font-black text-gray-900">{doctors.length}</div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">বিশেষজ্ঞ ডাক্তার</div>
+              </div>
+            </div>
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-6">
+              <div className="bg-purple-50 p-4 rounded-2xl text-purple-600"><Pill className="w-8 h-8" /></div>
+              <div>
+                <div className="text-3xl font-black text-gray-900">{pharmacies.length}</div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">ফার্মেসি</div>
+              </div>
+            </div>
+            <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm flex items-center gap-6">
+              <div className="bg-orange-50 p-4 rounded-2xl text-orange-600"><Activity className="w-8 h-8" /></div>
+              <div>
+                <div className="text-3xl font-black text-gray-900">{allSpecialties.length - 1}</div>
+                <div className="text-xs font-bold text-gray-400 uppercase tracking-widest">চিকিৎসা বিভাগ</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {/* Nearby Hospitals */}
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-2xl font-black text-gray-900">নিকটস্থ হাসপাতালসমূহ</h3>
+                <button onClick={() => setViewMode('hospitals')} className="text-green-600 font-bold text-sm hover:underline">সব দেখুন</button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {facilities.slice(0, 4).map(hospital => (
+                  <div key={hospital.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="bg-gray-50 p-3 rounded-xl group-hover:bg-green-50 transition-colors"><HospIcon className="w-6 h-6 text-gray-400 group-hover:text-green-600" /></div>
+                      <div>
+                        <h4 className="font-black text-gray-900 leading-tight">{hospital.name}</h4>
+                        <p className="text-xs text-gray-400 font-bold">{hospital.location}</p>
+                      </div>
+                    </div>
+                    <a href={`tel:${formatPhoneForDialer(hospital.phone)}`} className="w-full py-3 bg-gray-50 text-gray-900 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-green-600 hover:text-white transition-all">
+                      <Phone className="w-4 h-4" /> {hospital.phone}
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              {/* Specialties Grid */}
+              <div className="pt-6">
+                <div className="flex items-center justify-between px-2 mb-6">
+                  <h3 className="text-2xl font-black text-gray-900">বিশেষজ্ঞ বিভাগসমূহ</h3>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                  {allSpecialties.filter(s => s !== 'All').map(spec => {
+                    const count = doctors.filter(d => d.specialty === spec).length;
+                    return (
+                      <button 
+                        key={spec}
+                        onClick={() => { setViewMode('doctors'); setSelectedSpecialty(spec); }}
+                        className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm hover:border-green-200 hover:shadow-lg transition-all text-center group"
+                      >
+                        <div className="text-2xl font-black text-gray-900 mb-1 group-hover:text-green-600 transition-colors">{count}</div>
+                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{spec}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Pharmacies Sidebar */}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between px-2">
+                <h3 className="text-2xl font-black text-gray-900">ফার্মেসি</h3>
+              </div>
+              <div className="space-y-4">
+                {pharmacies.map(pharmacy => (
+                  <div key={pharmacy.id} className="bg-white p-6 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="bg-purple-50 p-3 rounded-xl text-purple-600"><Pill className="w-6 h-6" /></div>
+                      <div className="flex gap-2">
+                        {pharmacy.isOpen24Hours && <span className="px-2 py-1 bg-green-50 text-green-600 rounded-md text-[8px] font-black uppercase">24/7</span>}
+                        {pharmacy.deliveryAvailable && <span className="px-2 py-1 bg-blue-50 text-blue-600 rounded-md text-[8px] font-black uppercase">Delivery</span>}
+                      </div>
+                    </div>
+                    <h4 className="font-black text-gray-900 mb-1">{pharmacy.name}</h4>
+                    <div className="flex items-center gap-2 text-xs text-gray-400 font-bold mb-4">
+                      <MapPin className="w-3 h-3" /> {pharmacy.location}
+                    </div>
+                    <a href={`tel:${formatPhoneForDialer(pharmacy.phone)}`} className="w-full py-3 border border-gray-100 text-gray-600 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-purple-600 hover:text-white transition-all">
+                      <Phone className="w-4 h-4" /> কল করুন
+                    </a>
+                  </div>
+                ))}
+              </div>
+
+              {/* Emergency Banner */}
+              <div className="bg-red-600 p-8 rounded-[2.5rem] text-white shadow-2xl shadow-red-100 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl"></div>
+                <div className="relative z-10">
+                  <h4 className="text-xl font-black mb-2">জরুরি অ্যাম্বুলেন্স?</h4>
+                  <p className="text-red-100 text-sm font-bold mb-6 opacity-80">যেকোনো জরুরি প্রয়োজনে দ্রুত অ্যাম্বুলেন্স কল করুন।</p>
+                  <a href="tel:999" className="inline-flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-xl font-black text-sm hover:bg-red-50 transition-all">
+                    <Phone className="w-4 h-4" /> কল করুন ৯৯৯
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : viewMode === 'hospitals' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredHospitals.length > 0 ? (
             filteredHospitals.map((hospital: any) => (
@@ -274,7 +406,7 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
                   <div className="flex items-center gap-5 mb-6">
                     <div className="relative">
                       <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 border-2 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform duration-500">
-                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}` || null} className="w-full h-full object-cover" alt={doctor.name} />
+                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}` || undefined} className="w-full h-full object-cover" alt={doctor.name} />
                       </div>
                       <div className="absolute -bottom-2 -right-2 bg-blue-600 p-1.5 rounded-lg border-2 border-white shadow-lg">
                         <ShieldCheck className="w-3 h-3 text-white" />
@@ -336,83 +468,108 @@ const Health: React.FC<HealthProps> = ({ facilities, onBack }) => {
 
       {/* Doctor Detail Modal */}
       {selectedDoctor && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
-            <div className="relative h-48 bg-gradient-to-br from-green-600 to-green-800 p-8 flex items-end">
-              <button 
-                onClick={() => setSelectedDoctor(null)}
-                className="absolute top-6 right-6 bg-white/20 hover:bg-white/40 p-2 rounded-full text-white transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-              <div className="flex items-center gap-6 translate-y-12">
-                <div className="w-32 h-32 rounded-3xl bg-white p-1 shadow-2xl">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-black/90 backdrop-blur-2xl animate-in fade-in duration-500">
+          <div className="bg-white w-full max-w-5xl rounded-[4rem] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.3)] animate-in zoom-in slide-in-from-bottom-12 duration-700 flex flex-col md:flex-row h-full max-h-[85vh]">
+            {/* Profile Section */}
+            <div className="relative w-full md:w-2/5 h-64 md:h-auto bg-gradient-to-br from-green-600 via-green-700 to-green-900 p-12 flex flex-col justify-end overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-64 h-64 rounded-full bg-white blur-3xl"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-64 h-64 rounded-full bg-green-400 blur-3xl"></div>
+              </div>
+              
+              <div className="relative z-10 space-y-8">
+                <div className="w-40 h-40 rounded-[3rem] bg-white p-1.5 shadow-2xl rotate-[-3deg] group-hover:rotate-0 transition-transform duration-700">
                   <img 
-                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}` || null} 
-                    className="w-full h-full rounded-[1.4rem] object-cover bg-green-50" 
+                    src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}` || undefined} 
+                    className="w-full h-full rounded-[2.6rem] object-cover bg-green-50" 
                     alt={selectedDoctor.name} 
                   />
                 </div>
-                <div className="pb-4">
-                  <h3 className="text-3xl font-black text-white leading-tight mb-1">{selectedDoctor.name}</h3>
-                  <p className="text-green-100 font-bold uppercase tracking-widest text-sm">{selectedDoctor.specialty} Specialist</p>
+                <div>
+                  <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 mb-4">
+                    <ShieldCheck className="w-3 h-3 text-green-300" />
+                    <span className="text-[10px] font-black text-white uppercase tracking-widest">Verified Specialist</span>
+                  </div>
+                  <h3 className="text-4xl md:text-5xl font-black text-white leading-[0.9] tracking-tighter mb-4">{selectedDoctor.name}</h3>
+                  <p className="text-green-100 font-bold text-lg opacity-80">{selectedDoctor.specialty} বিশেষজ্ঞ</p>
                 </div>
               </div>
             </div>
             
-            <div className="p-8 pt-20 space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-blue-50 p-3 rounded-2xl text-blue-600"><Stethoscope className="w-6 h-6" /></div>
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">ডিগ্রি ও যোগ্যতা</p>
-                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.degree}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="bg-indigo-50 p-3 rounded-2xl text-indigo-600"><HospIcon className="w-6 h-6" /></div>
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">চেম্বার/হাসপাতাল</p>
-                      <p className="text-sm font-bold text-gray-700">
-                        {facilities.find(h => h.id === selectedDoctor.hospitalId)?.name || 'অজ্ঞাত'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-amber-50 p-3 rounded-2xl text-amber-600"><Clock className="w-6 h-6" /></div>
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">রোগী দেখার সময়</p>
-                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.viewingTime}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <div className="bg-green-50 p-3 rounded-2xl text-green-600"><Phone className="w-6 h-6" /></div>
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">সরাসরি সিরিয়াল</p>
-                      <p className="text-sm font-bold text-gray-700">{selectedDoctor.phone}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Info Section */}
+            <div className="w-full md:w-3/5 flex flex-col h-full bg-white relative">
+              <button 
+                onClick={() => setSelectedDoctor(null)}
+                className="absolute top-8 right-8 z-10 bg-gray-100 hover:bg-red-50 p-4 rounded-full text-gray-400 hover:text-red-500 transition-all shadow-sm active:scale-90"
+                aria-label="বন্ধ করুন"
+              >
+                <X className="w-6 h-6" />
+              </button>
 
-              {selectedDoctor.bio && (
-                <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100">
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">ডাক্তার সম্পর্কে</p>
-                  <p className="text-sm text-gray-600 leading-relaxed font-medium">{selectedDoctor.bio}</p>
-                </div>
-              )}
+              <div className="flex-grow overflow-y-auto p-8 md:p-16 custom-scrollbar">
+                <div className="grid grid-cols-1 gap-12">
+                  <div className="space-y-10">
+                    <div className="flex items-center gap-4">
+                       <div className="h-1 w-16 bg-green-600 rounded-full"></div>
+                       <span className="text-[10px] font-black text-green-600 uppercase tracking-[0.3em]">Doctor Profile</span>
+                    </div>
 
-              <div className="flex gap-4">
-                <a 
-                  href={`tel:${formatPhoneForDialer(facilities.find(h => h.id === selectedDoctor.hospitalId)?.phone || '')}`}
-                  className="flex-1 bg-green-600 text-white py-5 rounded-[1.5rem] font-black text-lg flex items-center justify-center gap-3 shadow-xl shadow-green-100 hover:bg-green-700 transition-all active:scale-95"
-                >
-                  <Phone className="w-5 h-5" /> সিরিয়াল বুক করুন
-                </a>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ডিগ্রি ও যোগ্যতা</p>
+                        <div className="flex items-start gap-3">
+                          <Stethoscope className="w-5 h-5 text-green-600 shrink-0 mt-1" />
+                          <p className="text-lg font-bold text-gray-800 leading-tight">{selectedDoctor.degree}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">চেম্বার/হাসপাতাল</p>
+                        <div className="flex items-start gap-3">
+                          <HospIcon className="w-5 h-5 text-green-600 shrink-0 mt-1" />
+                          <p className="text-lg font-bold text-gray-800 leading-tight">
+                            {facilities.find(h => h.id === selectedDoctor.hospitalId)?.name || 'অজ্ঞাত'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">রোগী দেখার সময়</p>
+                        <div className="flex items-start gap-3">
+                          <Clock className="w-5 h-5 text-green-600 shrink-0 mt-1" />
+                          <p className="text-lg font-bold text-gray-800 leading-tight">{selectedDoctor.viewingTime}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">সিরিয়াল নম্বর</p>
+                        <div className="flex items-start gap-3">
+                          <Phone className="w-5 h-5 text-green-600 shrink-0 mt-1" />
+                          <p className="text-lg font-bold text-gray-800 leading-tight">{selectedDoctor.phone}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {selectedDoctor.bio && (
+                      <div className="bg-green-50/50 p-10 rounded-[3rem] border border-green-100/50">
+                        <p className="text-[10px] font-black text-green-600 uppercase tracking-widest mb-4">ডাক্তার সম্পর্কে</p>
+                        <p className="text-lg text-gray-700 leading-relaxed font-medium italic">"{selectedDoctor.bio}"</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
+                    <a 
+                      href={`tel:${formatPhoneForDialer(selectedDoctor.phone)}`}
+                      className="flex-1 bg-green-600 text-white py-6 rounded-[2rem] font-black text-xl flex items-center justify-center gap-3 shadow-2xl shadow-green-100 hover:bg-green-700 transition-all active:scale-[0.98]"
+                    >
+                      <Phone className="w-6 h-6" /> সিরিয়াল বুক করুন
+                    </a>
+                    <button 
+                      onClick={() => setSelectedDoctor(null)}
+                      className="px-10 py-6 bg-gray-100 text-gray-600 rounded-[2rem] font-black text-lg hover:bg-gray-200 transition-all active:scale-[0.98]"
+                    >
+                      বন্ধ করুন
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

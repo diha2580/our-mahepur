@@ -8,6 +8,7 @@ import Directory from './pages/Directory';
 import TouristPlaces from './pages/TouristPlaces';
 import Education from './pages/Education';
 import ComplaintBox from './pages/ComplaintBox';
+import BloodDonation from './pages/BloodDonation';
 import EApplications from './pages/EApplications';
 import LandServices from './pages/LandServices';
 import History from './pages/History';
@@ -16,6 +17,8 @@ import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
 import DeveloperModal from './components/DeveloperModal';
+import AccessibilityToolbar from './components/AccessibilityToolbar';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import { WifiOff, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { syncDataToCache } from './lib/cache';
 import { initStorage, getCurrentUser, logoutUser, getPortalData, updatePortalData, subscribeToData } from './lib/store';
@@ -27,6 +30,16 @@ const App: React.FC = () => {
   const [portalData, setPortalData] = useState<any>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showDevModal, setShowDevModal] = useState(false);
+  const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>(() => (localStorage.getItem('fontSize') as any) || 'md');
+  const [isHighContrast, setIsHighContrast] = useState(() => localStorage.getItem('highContrast') === 'true');
+
+  useEffect(() => {
+    localStorage.setItem('fontSize', fontSize);
+  }, [fontSize]);
+
+  useEffect(() => {
+    localStorage.setItem('highContrast', String(isHighContrast));
+  }, [isHighContrast]);
 
   useEffect(() => {
     const setup = async () => {
@@ -154,6 +167,7 @@ const App: React.FC = () => {
       case 'health': return (
         <Health 
           facilities={portalData.healthFacilities || []} 
+          pharmacies={portalData.pharmacies || []}
           onBack={handleBack} 
         />
       );
@@ -172,6 +186,13 @@ const App: React.FC = () => {
           onBack={handleBack} 
         />
       );
+      case 'blood': return (
+        <BloodDonation 
+          donors={portalData.bloodDonors || []} 
+          onRegister={(newDonor) => handleDataUpdate({ ...portalData, bloodDonors: [newDonor, ...(portalData.bloodDonors || [])] })}
+          onBack={handleBack} 
+        />
+      );
       case 'complaint': return <ComplaintBox onBack={handleBack} />;
       case 'education': return (
         <Education 
@@ -186,7 +207,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className={`flex flex-col min-h-screen bg-gray-50 font-size-${fontSize} ${isHighContrast ? 'high-contrast' : ''}`}>
       {!isOnline && (
         <div className="bg-amber-500 text-white px-4 py-2 text-center text-sm font-bold flex items-center justify-center gap-2 animate-in slide-in-from-top z-[60]">
           <WifiOff className="w-4 h-4" />
@@ -217,6 +238,15 @@ const App: React.FC = () => {
       <Footer onShowDev={() => setShowDevModal(true)} />
       
       {showDevModal && <DeveloperModal onClose={() => setShowDevModal(false)} />}
+
+      <AccessibilityToolbar 
+        fontSize={fontSize}
+        isHighContrast={isHighContrast}
+        onFontSizeChange={setFontSize}
+        onContrastToggle={() => setIsHighContrast(!isHighContrast)}
+      />
+
+      <PWAInstallPrompt />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map, BookOpen } from 'lucide-react';
+import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map, BookOpen, Droplets } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -14,6 +14,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     { id: 'land', label: 'ভূমি সেবা', icon: Map, color: 'bg-amber-600', shadow: 'shadow-amber-100', desc: 'নামজারি আবেদন, খতিয়ান ও খাজনা' },
     { id: 'education', label: 'শিক্ষা প্রতিষ্ঠান', icon: GraduationCap, color: 'bg-indigo-500', shadow: 'shadow-indigo-100', desc: 'স্কুল, কলেজ ও ভার্সিটির তথ্য' },
     { id: 'tourism', label: 'দর্শনীয় স্থান', icon: MapPin, color: 'bg-orange-500', shadow: 'shadow-orange-100', desc: 'জেলার পর্যটন ও ম্যাপ লোকেশন' },
+    { id: 'blood', label: 'রক্তদান সেবা', icon: Droplets, color: 'bg-red-600', shadow: 'shadow-red-100', desc: 'জরুরি প্রয়োজনে রক্তদাতার সন্ধান করুন' },
     { id: 'complaint', label: 'অভিযোগ বক্স', icon: MessageSquare, color: 'bg-purple-500', shadow: 'shadow-purple-100', desc: 'সরাসরি অভিযোগ ও পরামর্শ পাঠান' },
     { id: 'contact', label: 'যোগাযোগ', icon: PhoneCall, color: 'bg-blue-600', shadow: 'shadow-blue-100', desc: 'আমাদের সাথে সরাসরি যোগাযোগ করুন' },
     { id: 'eapps', label: 'ই-আবেদন', icon: FileText, color: 'bg-teal-500', shadow: 'shadow-teal-100', desc: 'অনলাইন ফরম ও সার্টিফিকেটের লিংক' },
@@ -63,7 +64,8 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             <button
               key={service.id}
               onClick={() => onNavigate(service.id)}
-              className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-500 text-left group flex items-center gap-6"
+              aria-label={`${service.label} সেবায় যান: ${service.desc}`}
+              className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 text-left group flex items-center gap-6"
             >
               <div className={`${service.color} shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center text-white shadow-xl ${service.shadow} group-hover:scale-110 transition-transform duration-500`}>
                 <service.icon className="w-8 h-8 md:w-10 md:h-10" />

@@ -2,12 +2,12 @@ import React from 'react';
 import { 
   Home, PhoneCall, HeartPulse, Building2, MapPin, 
   MessageSquare, Menu, LogIn, LogOut, ShieldCheck, 
-  UserCircle, FileText, GraduationCap, Landmark
+  UserCircle, FileText, GraduationCap, Landmark, Droplets
 } from 'lucide-react';
 
 const iconMap: Record<string, any> = {
   Home, PhoneCall, HeartPulse, Building2, MapPin, 
-  MessageSquare, FileText, GraduationCap, Landmark
+  MessageSquare, FileText, GraduationCap, Landmark, Droplets
 };
 
 interface NavbarProps {
@@ -27,7 +27,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
     <nav className="bg-green-800 text-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => onNavigate('home')}>
+          <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => onNavigate('home')} role="link" aria-label="হোম পেজে যান">
             <div className="bg-black rounded-full p-0.5 border-2 border-green-400 overflow-hidden logo-glow group-hover:scale-110 transition-transform">
                <img 
                  src="logo.png" 
@@ -56,6 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
                 <button
                   key={item.id}
                   onClick={() => onNavigate(item.id)}
+                  aria-current={activePage === item.id ? 'page' : undefined}
                   className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-sm font-bold transition-all ${
                     activePage === item.id 
                     ? 'bg-green-900 text-green-300 shadow-inner' 
@@ -74,6 +75,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
                 <div className="relative">
                   <button 
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
+                    aria-expanded={showProfileMenu}
+                    aria-haspopup="true"
                     className="flex items-center gap-2 hover:bg-green-700 p-1.5 rounded-full pr-4 transition-colors bg-green-900/50"
                   >
                     <img src={user.profilePic || undefined} className="w-8 h-8 rounded-full border border-green-400 bg-white/10" alt="Profile" />
@@ -116,6 +119,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-label="মেনু খুলুন"
               className="inline-flex items-center justify-center p-2 rounded-xl bg-green-900/50 hover:bg-green-700 focus:outline-none transition-colors"
             >
               <Menu className="h-6 w-6" />

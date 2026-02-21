@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আমাদের মহেশপুর - ডিজিটাল সেবা</title>
     <link rel="icon" type="image/png" href="logo.png">
+    <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -23,6 +24,30 @@
         }
         .logo-glow {
             box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+        }
+
+        /* Accessibility: Font Sizes */
+        .font-size-sm { font-size: 0.875rem; }
+        .font-size-md { font-size: 1rem; }
+        .font-size-lg { font-size: 1.125rem; }
+        .font-size-xl { font-size: 1.25rem; }
+
+        /* Accessibility: High Contrast */
+        .high-contrast {
+            filter: contrast(1.2) saturate(1.2);
+        }
+        .high-contrast body {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+        .high-contrast .bg-white {
+            background-color: #ffffff !important;
+            border-color: #000000 !important;
+        }
+        .high-contrast .text-gray-500, 
+        .high-contrast .text-gray-400 {
+            color: #000000 !important;
+            opacity: 1 !important;
         }
     </style>
 <script type="importmap">

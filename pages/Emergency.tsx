@@ -56,6 +56,7 @@ const Emergency: React.FC<EmergencyProps> = ({ user, contacts, onUpdate, onBack 
     <div className="animate-in slide-in-from-bottom duration-500 pb-20">
       <button 
         onClick={onBack}
+        aria-label="আগের পৃষ্ঠায় ফিরে যান"
         className="mb-6 flex items-center gap-2 text-gray-500 hover:text-red-600 font-bold transition-colors group"
       >
         <div className="bg-white p-2 rounded-full shadow-sm group-hover:bg-red-50 transition-colors">
@@ -89,6 +90,7 @@ const Emergency: React.FC<EmergencyProps> = ({ user, contacts, onUpdate, onBack 
           <a
             key={idx}
             href={`tel:${formatPhoneForDialer(sos.phone)}`}
+            aria-label={`${sos.label} এ কল করুন: ${sos.phone}`}
             className={`${sos.color} p-6 rounded-3xl text-white shadow-xl shadow-red-100 hover:scale-[1.02] active:scale-95 transition-all flex flex-col items-center justify-center text-center gap-3 group relative overflow-hidden`}
           >
             <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -131,7 +133,7 @@ const Emergency: React.FC<EmergencyProps> = ({ user, contacts, onUpdate, onBack 
                     <button onClick={() => handleDelete(contact.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="ডিলিট করুন"><Trash2 className="w-4 h-4" /></button>
                   </div>
                 )}
-                <a href={`tel:${formatPhoneForDialer(contact.phone)}`} className="p-4 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-100 active:scale-90" title="সরাসরি কল করুন"><Phone className="w-6 h-6" /></a>
+                <a href={`tel:${formatPhoneForDialer(contact.phone)}`} aria-label={`${contact.name} এ কল করুন`} className="p-4 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-100 active:scale-90" title="সরাসরি কল করুন"><Phone className="w-6 h-6" /></a>
               </div>
             </div>
           ))}
@@ -175,7 +177,7 @@ const Emergency: React.FC<EmergencyProps> = ({ user, contacts, onUpdate, onBack 
         </div>
       )}
 
-      <a href={`tel:999`} className="fixed bottom-8 right-8 z-[100] bg-red-600 text-white w-20 h-20 rounded-full shadow-2xl flex flex-col items-center justify-center border-4 border-white animate-bounce md:hidden">
+      <a href={`tel:999`} aria-label="জরুরি ৯৯৯ এ কল করুন (SOS)" className="fixed bottom-8 right-8 z-[100] bg-red-600 text-white w-20 h-20 rounded-full shadow-2xl flex flex-col items-center justify-center border-4 border-white animate-bounce md:hidden">
         <ShieldAlert className="w-8 h-8" />
         <span className="text-[10px] font-bold uppercase">SOS</span>
       </a>

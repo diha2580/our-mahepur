@@ -6,7 +6,8 @@ export enum ServiceCategory {
   TOURISM = 'পর্যটন কেন্দ্র',
   COMPLAINT = 'অভিযোগ বক্স',
   E_APPLICATION = 'ই-আবেদন',
-  LAND = 'ভূমি সেবা'
+  LAND = 'ভূমি সেবা',
+  BLOOD_DONATION = 'রক্তদান সেবা'
 }
 
 export interface EmergencyContact {
@@ -45,6 +46,15 @@ export interface Hospital {
   doctors?: Doctor[];
 }
 
+export interface Pharmacy {
+  id: string;
+  name: string;
+  location: string;
+  phone: string;
+  isOpen24Hours: boolean;
+  deliveryAvailable: boolean;
+}
+
 export interface TouristPlace {
   id: string;
   name: string;
@@ -53,6 +63,16 @@ export interface TouristPlace {
   mediaType?: 'image' | 'video';
   location: string;
   contributor?: string;
+}
+
+export interface BloodDonor {
+  id: string;
+  name: string;
+  bloodGroup: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  phone: string;
+  location: string;
+  lastDonationDate: string;
+  isAvailable: boolean;
 }
 
 export interface Complaint {

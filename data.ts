@@ -1,4 +1,4 @@
-import { EmergencyContact, Official, Hospital, TouristPlace } from './types';
+import { EmergencyContact, Official, Hospital, TouristPlace, BloodDonor, Pharmacy } from './types';
 
 export const initialNavItems = [
   { id: 'home', label: 'হোম', icon: 'Home' },
@@ -9,6 +9,7 @@ export const initialNavItems = [
   { id: 'land', label: 'ভূমি সেবা', icon: 'Landmark' },
   { id: 'education', label: 'শিক্ষা', icon: 'GraduationCap' },
   { id: 'tourism', label: 'পর্যটন', icon: 'MapPin' },
+  { id: 'blood', label: 'রক্তদান', icon: 'Droplets' },
   { id: 'complaint', label: 'অভিযোগ', icon: 'MessageSquare' },
   { id: 'contact', label: 'যোগাযোগ', icon: 'PhoneCall' },
   { id: 'eapps', label: 'ই-আবেদন', icon: 'FileText' },
@@ -89,6 +90,12 @@ export const healthFacilities: Hospital[] = [
   }
 ];
 
+export const pharmacies: Pharmacy[] = [
+  { id: '1', name: 'লাজ ফার্মা', location: 'হাসপাতাল মোড়', phone: '০১৭০০-১১২২৩৩', isOpen24Hours: true, deliveryAvailable: true },
+  { id: '2', name: 'মেডিসিন কর্নার', location: 'কলেজ রোড', phone: '০১৮৯৯-২২৩৩৪৪', isOpen24Hours: false, deliveryAvailable: true },
+  { id: '3', name: 'জনতা ফার্মেসি', location: 'থানা রোড', phone: '০১৯১১-৩৩৪৪৫৫', isOpen24Hours: true, deliveryAvailable: false }
+];
+
 export const touristSpots: TouristPlace[] = [
   { id: '1', name: 'ঐতিহাসিক রাজবাড়ি', description: 'জেলা শহরের কেন্দ্রস্থলে অবস্থিত ১৮শ শতাব্দীর একটি প্রাচীন স্থাপত্য।', image: 'https://images.unsplash.com/photo-1596422846543-75c6fc18a594?auto=format&fit=crop&q=80&w=800', location: 'রাজবাড়ি রোড', mediaType: 'image' },
   { id: '2', name: 'জেলা লেক ও পার্ক', description: 'পারিবারিক ভ্রমণের জন্য জেলার সবথেকে জনপ্রিয় ও মনোরম স্থান।', image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=800', location: 'লেক ভিউ রোড', mediaType: 'image' },
@@ -123,3 +130,10 @@ export const contactInfo = {
   phone: '০১৭০০-০০০০০০',
   supportText: 'আমাদের সাপোর্ট টিম ২৪/৭ আপনার সেবায় নিয়োজিত। যেকোনো প্রয়োজনে আমাদের সাথে যোগাযোগ করুন।'
 };
+
+export const bloodDonors: BloodDonor[] = [
+  { id: '1', name: 'মোঃ রহিম উদ্দিন', bloodGroup: 'O+', phone: '০১৭০০-১১২২৩৩', location: 'মহেশপুর সদর', lastDonationDate: '২০২৩-১০-১৫', isAvailable: true },
+  { id: '2', name: 'আব্দুল করিম', bloodGroup: 'A+', phone: '০১৮৯৯-২২৩৩৪৪', location: 'খালিশপুর', lastDonationDate: '২০২৩-১২-০১', isAvailable: true },
+  { id: '3', name: 'সাদিয়া ইসলাম', bloodGroup: 'B+', phone: '০১৯১১-৩৩৪৪৫৫', location: 'পৌর এলাকা', lastDonationDate: '২০২৪-০১-১০', isAvailable: false },
+  { id: '4', name: 'নাহিদ হাসান', bloodGroup: 'AB+', phone: '০১৬৭৮-৯৯৮৮৭৭', location: 'ভৈরব', lastDonationDate: '২০২৩-০৯-২০', isAvailable: true }
+];
