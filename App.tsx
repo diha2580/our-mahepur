@@ -110,6 +110,7 @@ const App: React.FC = () => {
   };
 
   const handleDataUpdate = async (newData: any) => {
+    setPortalData(newData);
     await updatePortalData(newData);
   };
 

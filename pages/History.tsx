@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, History as HistoryIcon, Landmark, ArrowLeft, Calendar, ShieldCheck, MapPin } from 'lucide-react';
+import { History as HistoryIcon, Landmark, ArrowLeft, Calendar, ShieldCheck, MapPin } from 'lucide-react';
 
 interface HistoryProps {
   data: any;

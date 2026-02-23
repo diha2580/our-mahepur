@@ -4,7 +4,7 @@ import {
   Settings, Plus, Edit2, Trash2, Save, X, Phone, MapPin, 
   User, Mail, FileText, Calendar, MessageSquareText, Send, Loader2, 
   ShieldCheck, Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
-  Database, ArrowLeft, Camera, Droplets, Pill
+  Database, ArrowLeft, Camera, Droplets, Pill, Landmark
 } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
 import { GoogleGenAI } from "@google/genai";
@@ -58,7 +58,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const handleDelete = async (category: string, id: string) => {
     if (!confirm('আপনি কি নিশ্চিত যে এটি ডিলিট করতে চান?')) return;
     const newData = { ...data };
-    newData[category] = newData[category].filter((item: any) => item.id !== id);
+    newData[category] = newData[category].filter((item: any) => String(item.id) !== String(id));
     setData(newData);
     await updatePortalData(newData);
   };
@@ -101,6 +101,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
       case 'navItems': return { id: '', label: '', icon: 'Home' };
       case 'bloodDonors': return { id: Date.now().toString(), name: '', bloodGroup: 'O+', phone: '', location: '', lastDonationDate: new Date().toISOString().split('T')[0], isAvailable: true };
       case 'pharmacies': return { id: Date.now().toString(), name: '', location: '', phone: '', isOpen24Hours: false, deliveryAvailable: false };
+      case 'landServices': return { id: Date.now().toString(), title: '', link: '', desc: '' };
       default: return { id: Date.now().toString(), name: '', phone: '', location: '', type: 'Fire' };
     }
   };
@@ -125,6 +126,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     { id: 'touristSpots', label: 'পর্যটন', icon: MapPin },
     { id: 'bloodDonors', label: 'রক্তদান', icon: Droplets },
     { id: 'pharmacies', label: 'ফার্মেসি', icon: Pill },
+    { id: 'landServices', label: 'ভূমি সেবা', icon: Landmark },
     { id: 'eApplications', label: 'ই-আবেদন', icon: FileText },
     { id: 'navItems', label: 'মেনু বার', icon: Layout },
     { id: 'contactInfo', label: 'যোগাযোগ তথ্য', icon: Phone },
@@ -419,6 +421,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                       <label htmlFor="deliveryAvailable" className="font-bold">ডেলিভারি সুবিধা?</label>
                     </div>
                   </div>
+                </div>
+              )}
+              {activeTab === 'landServices' && (
+                <div className="space-y-4">
+                  <input placeholder="সেবার শিরোনাম" className="w-full p-3 border rounded-xl" value={editingItem.title} onChange={e => setEditingItem({...editingItem, title: e.target.value})} />
+                  <input placeholder="লিঙ্ক" className="w-full p-3 border rounded-xl" value={editingItem.link} onChange={e => setEditingItem({...editingItem, link: e.target.value})} />
+                  <textarea placeholder="সংক্ষিপ্ত বর্ণনা" className="w-full p-3 border rounded-xl" rows={3} value={editingItem.desc} onChange={e => setEditingItem({...editingItem, desc: e.target.value})} />
                 </div>
               )}
               {activeTab === 'eApplications' && (

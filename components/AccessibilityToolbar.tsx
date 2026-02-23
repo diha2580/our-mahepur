@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Type, Eye, Volume2, Settings2, X, Sun, Moon, ZoomIn, ZoomOut } from 'lucide-react';
+import React, { useState } from 'react';
+import { Volume2, Settings2, X, Sun, Moon, ZoomIn, ZoomOut } from 'lucide-react';
 
 interface AccessibilityToolbarProps {
   onFontSizeChange: (size: 'sm' | 'md' | 'lg' | 'xl') => void;

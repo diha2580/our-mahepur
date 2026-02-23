@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { User, Mail, Phone, Camera, Save, LogOut, ChevronRight, Edit3, Shield, ArrowLeft, Loader2 } from 'lucide-react';
+import { User, Mail, Phone, Camera, Save, LogOut, Edit3, Shield, ArrowLeft, Loader2 } from 'lucide-react';
 import { updateUser } from '../lib/store';
 
 interface ProfileProps {
@@ -57,7 +57,7 @@ const Profile: React.FC<ProfileProps> = ({ user, onUpdate, onLogout, onBack }) =
         setIsEditing(false);
         alert('প্রোফাইল সফলভাবে আপডেট করা হয়েছে!');
       }
-    } catch (err) {
+    } catch {
       alert('প্রোফাইল আপডেট করতে সমস্যা হয়েছে।');
     } finally {
       setIsSaving(false);

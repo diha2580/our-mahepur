@@ -6,7 +6,7 @@ export const formatPhoneForDialer = (phone: string): string => {
   };
 
   // Convert Bengali digits to English
-  let standardPhone = phone.split('').map(char => bengaliToEnglish[char] || char).join('');
+  const standardPhone = phone.split('').map(char => bengaliToEnglish[char] || char).join('');
   
   // Remove everything except numbers and '+'
   return standardPhone.replace(/[^\d+]/g, '');

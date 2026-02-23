@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Phone, MapPin, Siren, ShieldAlert, Truck, AlertTriangle, 
-  Plus, Edit2, Trash2, X, Save, AlertCircle, ArrowLeft 
+  Plus, Edit2, Trash2, X, Save, ArrowLeft 
 } from 'lucide-react';
 import { formatPhoneForDialer } from '../lib/utils';
 

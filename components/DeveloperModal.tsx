@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MessageCircle, Facebook, ArrowLeft, Terminal, ShieldCheck, User } from 'lucide-react';
+import { X, MessageCircle, Facebook, ArrowLeft, Terminal, ShieldCheck } from 'lucide-react';
 
 interface DeveloperModalProps {
   onClose: () => void;

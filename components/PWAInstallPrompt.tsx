@@ -5,30 +5,38 @@ const PWAInstallPrompt: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    // Check if user has already dismissed the prompt
+    const isDismissed = localStorage.getItem('pwa-prompt-dismissed');
+    if (isDismissed) return;
+
+    // Check if it's iOS
+    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    setIsIOS(isIOSDevice);
+
     const handleBeforeInstallPrompt = (e: Event) => {
-      // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      // Stash the event so it can be triggered later.
       setDeferredPrompt(e);
-      // Update UI notify the user they can install the PWA
       setIsVisible(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     window.addEventListener('appinstalled', () => {
-      // Log install to analytics
-      console.log('INSTALL: Success');
       setIsVisible(false);
       setIsInstalled(true);
       setTimeout(() => setIsInstalled(false), 5000);
     });
 
-    // Check if already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    // Check if already in standalone mode
+    if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
       setIsVisible(false);
+    } else if (isIOSDevice) {
+      // For iOS, we can show the prompt after a short delay
+      const timer = setTimeout(() => setIsVisible(true), 3000);
+      return () => clearTimeout(timer);
     }
 
     return () => {
@@ -38,17 +46,17 @@ const PWAInstallPrompt: React.FC = () => {
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
-
-    // Show the install prompt
     deferredPrompt.prompt();
-
-    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to the install prompt: ${outcome}`);
-
-    // We've used the prompt, and can't use it again, throw it away
+    if (outcome === 'accepted') {
+      setIsVisible(false);
+    }
     setDeferredPrompt(null);
+  };
+
+  const handleDismiss = () => {
     setIsVisible(false);
+    localStorage.setItem('pwa-prompt-dismissed', 'true');
   };
 
   if (isInstalled) {
@@ -66,9 +74,9 @@ const PWAInstallPrompt: React.FC = () => {
 
   return (
     <div className="fixed bottom-6 left-4 right-4 md:left-auto md:right-8 md:w-96 z-[100] animate-in slide-in-from-bottom-10 duration-700">
-      <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden relative">
+      <div className="bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden relative">
         <button 
-          onClick={() => setIsVisible(false)}
+          onClick={handleDismiss}
           className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors"
         >
           <X className="w-5 h-5" />
@@ -81,20 +89,30 @@ const PWAInstallPrompt: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xl font-black text-gray-900 leading-tight">অ্যাপ হিসেবে ব্যবহার করুন</h4>
-              <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Install as APK/App</p>
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Install Digital Portal</p>
             </div>
           </div>
 
           <p className="text-sm text-gray-500 font-medium mb-8 leading-relaxed">
-            সহজ ও দ্রুত ব্যবহারের জন্য "আমাদের মহেশপুর" অ্যাপটি আপনার মোবাইলে ইনস্টল করে নিন। এটি অফলাইনেও কাজ করবে।
+            {isIOS ? (
+              <>আইফোনে ইনস্টল করতে নিচের <span className="font-bold text-gray-900">Share</span> বাটনে ক্লিক করে <span className="font-bold text-gray-900">"Add to Home Screen"</span> সিলেক্ট করুন।</>
+            ) : (
+              <>"আমাদের মহেশপুর" অ্যাপটি আপনার মোবাইলে ইনস্টল করে নিন। এটি দ্রুত লোড হবে এবং অফলাইনেও কাজ করবে।</>
+            )}
           </p>
 
-          <button 
-            onClick={handleInstallClick}
-            className="w-full py-4 bg-green-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-green-700 transition-all shadow-xl shadow-green-100 active:scale-95"
-          >
-            <Download className="w-5 h-5" /> এখনই ইনস্টল করুন
-          </button>
+          {!isIOS ? (
+            <button 
+              onClick={handleInstallClick}
+              className="w-full py-4 bg-green-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-green-700 transition-all shadow-xl shadow-green-100 active:scale-95"
+            >
+              <Download className="w-5 h-5" /> এখনই ইনস্টল করুন
+            </button>
+          ) : (
+            <div className="w-full py-4 bg-gray-50 text-gray-600 rounded-2xl font-bold flex items-center justify-center gap-2 border border-gray-100 italic text-sm">
+              ইনস্টল করতে শেয়ার মেনু ব্যবহার করুন
+            </div>
+          )}
         </div>
       </div>
     </div>

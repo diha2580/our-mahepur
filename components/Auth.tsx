@@ -1,6 +1,6 @@
-import React, { useState, useRef, useMemo } from 'react';
-import { User, Mail, Phone, Lock, Camera, ArrowRight, Loader2, LogIn, Upload, ShieldCheck, ShieldAlert, Shield, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
-import { loginUser, saveUser } from '../lib/store';
+import React, { useState, useRef } from 'react';
+import { User, Mail, Phone, Lock, Camera, ArrowRight, Loader2, LogIn, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
+import { loginUser } from '../lib/store';
 import { supabase } from '../lib/supabase';
 
 interface AuthProps {
@@ -19,21 +19,6 @@ const Auth: React.FC<AuthProps> = ({ onSuccess, onSwitch, mode, onBack }) => {
     name: '', email: '', phone: '', password: '',
     profilePic: 'https://api.dicebear.com/7.x/avataaars/svg?seed=' + Math.random()
   });
-
-  const passwordStrength = useMemo(() => {
-    const pwd = formData.password;
-    if (!pwd) return { score: 0, label: '', color: 'bg-gray-200' };
-    let score = 0;
-    if (pwd.length > 6) score += 1;
-    if (pwd.length > 10) score += 1;
-    if (/[A-Z]/.test(pwd)) score += 1;
-    if (/[a-z]/.test(pwd)) score += 1;
-    if (/[0-9]/.test(pwd)) score += 1;
-    if (/[^A-Za-z0-9]/.test(pwd)) score += 1;
-    if (score <= 2) return { score: 33, label: 'দুর্বল (Weak)', color: 'bg-red-500', text: 'text-red-500', icon: ShieldAlert };
-    if (score <= 4) return { score: 66, label: 'মাঝারি (Medium)', color: 'bg-yellow-500', text: 'text-yellow-500', icon: Shield };
-    return { score: 100, label: 'শক্তিশালী (Strong)', color: 'bg-green-500', text: 'text-green-500', icon: ShieldCheck };
-  }, [formData.password]);
 
   const compressAndResizeImage = (base64Str: string): Promise<string> => {
     return new Promise((resolve) => {

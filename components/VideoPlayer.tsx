@@ -24,7 +24,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, className = '', autoPlay
         });
       }
     }
-  }, [src, autoPlay]);
+  }, [src, autoPlay, isMuted]);
 
   const togglePlay = () => {
     if (videoRef.current) {

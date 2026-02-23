@@ -29,7 +29,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
 
   const handleDelete = (id: string) => {
     if (window.confirm('আপনি কি নিশ্চিত যে এই পর্যটন কেন্দ্রটি ডিলিট করতে চান?')) {
-      onUpdate(spots.filter(s => s.id !== id));
+      onUpdate(spots.filter(s => String(s.id) !== String(id)));
     }
   };
   const [formData, setFormData] = useState({
@@ -110,7 +110,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
           ফিরে যান
         </button>
 
-        {user?.role === 'Admin' && (
+        {user?.role === 'admin' && (
           <button 
             onClick={() => setIsModalOpen(true)}
             className="bg-orange-600 text-white px-6 py-3 rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-orange-100 hover:bg-orange-700 transition-all active:scale-95"
@@ -151,7 +151,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
           filteredSpots.map((spot) => (
             <div key={spot.id} className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 hover:shadow-2xl transition-all duration-500 flex flex-col h-full relative">
             {/* Admin Delete Button */}
-            {user?.role === 'Admin' && (
+            {user?.role === 'admin' && (
               <button 
                 onClick={(e) => {
                   e.stopPropagation();

@@ -2,7 +2,6 @@ import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, e
 import { supabase } from './supabase';
 
 const DATA_KEY = 'portal_app_data_v1';
-const USERS_KEY = 'portal_users_v1';
 const CURRENT_USER_KEY = 'portal_current_user';
 const COMPLAINTS_KEY = 'portal_complaints_v1';
 const CONTACT_MESSAGES_KEY = 'portal_contact_messages_v1';
@@ -48,6 +47,12 @@ export const initStorage = async () => {
       .single();
 
     if (fetchError || !existingData) {
+      throw new Error(fetchError?.message || 'No data found');
+    }
+    localStorage.setItem(DATA_KEY, JSON.stringify(existingData.data));
+  } catch (e) {
+    console.error("Supabase fetch failed, using local/initial data", e);
+    if (!localStorage.getItem(DATA_KEY)) {
       const initialData = {
         emergencyContacts,
         districtOfficials,
@@ -62,22 +67,16 @@ export const initStorage = async () => {
         bloodDonors,
         pharmacies
       };
-      
-      await supabase.from('portal_data').upsert({ id: 'main', data: initialData });
       localStorage.setItem(DATA_KEY, JSON.stringify(initialData));
-    } else {
-      localStorage.setItem(DATA_KEY, JSON.stringify(existingData.data));
     }
-    
-    // Initialize local storage for other keys if needed
-    if (!localStorage.getItem(COMPLAINTS_KEY)) {
-      localStorage.setItem(COMPLAINTS_KEY, JSON.stringify([]));
-    }
-    if (!localStorage.getItem(CONTACT_MESSAGES_KEY)) {
-      localStorage.setItem(CONTACT_MESSAGES_KEY, JSON.stringify([]));
-    }
-  } catch (e) {
-    console.error("Storage initialization failed", e);
+  }
+  
+  // Initialize local storage for other keys if needed
+  if (!localStorage.getItem(COMPLAINTS_KEY)) {
+    localStorage.setItem(COMPLAINTS_KEY, JSON.stringify([]));
+  }
+  if (!localStorage.getItem(CONTACT_MESSAGES_KEY)) {
+    localStorage.setItem(CONTACT_MESSAGES_KEY, JSON.stringify([]));
   }
 };
 
@@ -91,7 +90,11 @@ export const updatePortalData = async (newData: any) => {
     localStorage.setItem(DATA_KEY, JSON.stringify(newData));
     
     // Sync with Supabase
-    await supabase.from('portal_data').upsert({ id: 'main', data: newData });
+    try {
+      await supabase.from('portal_data').upsert({ id: 'main', data: newData });
+    } catch (supabaseError) {
+      console.error("Supabase sync failed, but local data updated", supabaseError);
+    }
 
     // Notify same-tab listeners
     notifyListeners(newData);
@@ -106,17 +109,19 @@ export const updatePortalData = async (newData: any) => {
 };
 
 export const getComplaints = async () => {
-  const { data, error } = await supabase
-    .from('complaints')
-    .select('*')
-    .order('date', { ascending: false });
-  
-  if (error) {
-    console.error("Error fetching complaints", error);
+  try {
+    const { data, error } = await supabase
+      .from('complaints')
+      .select('*')
+      .order('date', { ascending: false });
+    
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Error fetching complaints from Supabase", e);
     const localData = localStorage.getItem(COMPLAINTS_KEY);
     return localData ? JSON.parse(localData) : [];
   }
-  return data;
 };
 
 export const saveComplaint = async (complaint: any) => {
@@ -126,62 +131,69 @@ export const saveComplaint = async (complaint: any) => {
     date: new Date().toLocaleString('bn-BD') 
   };
 
-  const { data, error } = await supabase
-    .from('complaints')
-    .insert([newComplaint])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('complaints')
+      .insert([newComplaint])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error saving complaint", error);
-    // Fallback to local storage
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Error saving complaint to Supabase, falling back to local", e);
     const complaints = JSON.parse(localStorage.getItem(COMPLAINTS_KEY) || '[]');
     const localComplaint = { ...newComplaint, id: Date.now().toString() };
     complaints.unshift(localComplaint);
     localStorage.setItem(COMPLAINTS_KEY, JSON.stringify(complaints));
     return localComplaint;
   }
-  return data;
 };
 
 export const updateComplaint = async (id: string, updates: any) => {
-  const { data, error } = await supabase
-    .from('complaints')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('complaints')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error updating complaint", error);
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Error updating complaint in Supabase", e);
     return null;
   }
-  return data;
 };
 
 export const deleteComplaint = async (id: string) => {
-  const { error } = await supabase
-    .from('complaints')
-    .delete()
-    .eq('id', id);
+  try {
+    const { error } = await supabase
+      .from('complaints')
+      .delete()
+      .eq('id', id);
 
-  if (error) {
-    console.error("Error deleting complaint", error);
+    if (error) throw error;
+  } catch (e) {
+    console.error("Error deleting complaint from Supabase", e);
   }
 };
 
 export const getContactMessages = async () => {
-  const { data, error } = await supabase
-    .from('contact_messages')
-    .select('*')
-    .order('date', { ascending: false });
-  
-  if (error) {
-    console.error("Error fetching messages", error);
+  try {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .select('*')
+      .order('date', { ascending: false });
+    
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Error fetching messages from Supabase", e);
     const localData = localStorage.getItem(CONTACT_MESSAGES_KEY);
     return localData ? JSON.parse(localData) : [];
   }
-  return data;
 };
 
 export const saveContactMessage = async (message: any) => {
@@ -190,21 +202,23 @@ export const saveContactMessage = async (message: any) => {
     date: new Date().toLocaleString('bn-BD') 
   };
 
-  const { data, error } = await supabase
-    .from('contact_messages')
-    .insert([newMessage])
-    .select()
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('contact_messages')
+      .insert([newMessage])
+      .select()
+      .single();
 
-  if (error) {
-    console.error("Error saving message", error);
+    if (error) throw error;
+    return data;
+  } catch (e) {
+    console.error("Error saving message to Supabase, falling back to local", e);
     const messages = JSON.parse(localStorage.getItem(CONTACT_MESSAGES_KEY) || '[]');
     const localMsg = { ...newMessage, id: Date.now().toString() };
     messages.unshift(localMsg);
     localStorage.setItem(CONTACT_MESSAGES_KEY, JSON.stringify(messages));
     return localMsg;
   }
-  return data;
 };
 
 export const getUsers = async () => {
