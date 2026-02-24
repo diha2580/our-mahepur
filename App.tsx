@@ -42,6 +42,46 @@ const App: React.FC = () => {
   }, [isHighContrast]);
 
   useEffect(() => {
+    if (portalData?.appIcon) {
+      // Update Favicon
+      const favicon = document.querySelector('link[rel="icon"]');
+      if (favicon) favicon.setAttribute('href', portalData.appIcon);
+
+      // Dynamic Manifest Update
+      const manifest = {
+        name: "Our Mahespur",
+        short_name: "Our Mahespur",
+        description: "মহেশপুর উপজেলার সকল ডিজিটাল সেবা এক জায়গায়।",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#166534",
+        icons: [
+          {
+            src: portalData.appIcon,
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any maskable"
+          },
+          {
+            src: portalData.appIcon,
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      };
+
+      const stringManifest = JSON.stringify(manifest);
+      const blob = new Blob([stringManifest], {type: 'application/json'});
+      const manifestURL = URL.createObjectURL(blob);
+      const manifestElement = document.querySelector('link[rel="manifest"]');
+      if (manifestElement) {
+        manifestElement.setAttribute('href', manifestURL);
+      }
+    }
+  }, [portalData]);
+
+  useEffect(() => {
     const setup = async () => {
       await initStorage();
       setUser(getCurrentUser());
@@ -230,6 +270,7 @@ const App: React.FC = () => {
         user={user} 
         onLogout={handleLogout} 
         navItems={portalData?.navItems || []} 
+        appIcon={portalData?.appIcon}
       />
       
       <main className="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 md:py-12">

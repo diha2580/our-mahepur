@@ -17,9 +17,10 @@ interface NavbarProps {
   user: any;
   onLogout: () => void;
   navItems: Array<{ id: string, label: string, icon: string }>;
+  appIcon?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user, onLogout, navItems }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user, onLogout, navItems, appIcon }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [showProfileMenu, setShowProfileMenu] = React.useState(false);
 
@@ -30,9 +31,9 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
           <div className="flex items-center space-x-3 cursor-pointer group" onClick={() => onNavigate('home')} role="link" aria-label="হোম পেজে যান">
             <div className="bg-black rounded-full p-0.5 border-2 border-green-400 overflow-hidden logo-glow group-hover:scale-110 transition-transform">
                <img 
-                 src="logo.png" 
+                 src={appIcon || "logo.png"} 
                  className="w-10 h-10 object-cover" 
-                 alt="আমাদের মহেশপুর লোগো"
+                 alt="Our Mahespur Logo"
                  onError={(e) => {
                    // Fallback if logo.png is missing
                    (e.target as HTMLImageElement).src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1024px-Government_Seal_of_Bangladesh.svg.png';
@@ -41,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, activePage, isOnline, user,
             </div>
             <div>
                <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-bold leading-none tracking-tight">আমাদের মহেশপুর</h1>
+                  <h1 className="text-xl font-bold leading-none tracking-tight">Our Mahespur</h1>
                   <div title={isOnline ? "অনলাইন" : "অফলাইন"} className={`w-2.5 h-2.5 rounded-full ${isOnline ? 'bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]' : 'bg-red-500 animate-pulse'}`}></div>
                </div>
                <span className="text-[10px] opacity-80 font-medium uppercase tracking-widest">Digital Service Portal</span>

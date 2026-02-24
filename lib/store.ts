@@ -54,6 +54,7 @@ export const initStorage = async () => {
     console.error("Supabase fetch failed, using local/initial data", e);
     if (!localStorage.getItem(DATA_KEY)) {
       const initialData = {
+        appIcon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/512x512.png',
         emergencyContacts,
         districtOfficials,
         healthFacilities,

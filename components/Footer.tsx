@@ -13,7 +13,7 @@ const Footer: React.FC<FooterProps> = ({ onShowDev }) => {
           <div>
             <h3 className="text-lg font-bold mb-4 text-green-500">পরিকল্পনা ও বাস্তবায়নে</h3>
             <p className="text-sm text-gray-400">
-              আমাদের মহেশপুর গ্রুপ ও NS Marketing Agency <br />
+              Our Mahespur Group ও NS Marketing Agency <br />
               যেকোনো প্রয়োজনে আমাদের ইমেইল করুন অথবা কল করুন।
             </p>
           </div>
@@ -36,7 +36,7 @@ const Footer: React.FC<FooterProps> = ({ onShowDev }) => {
         
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-xs text-gray-500 order-2 md:order-1">
-            &copy; {new Date().getFullYear()} আমাদের মহেশপুর। সর্বস্বত্ব সংরক্ষিত।
+            &copy; {new Date().getFullYear()} Our Mahespur। সর্বস্বত্ব সংরক্ষিত।
           </div>
           
           <div className="order-1 md:order-2">

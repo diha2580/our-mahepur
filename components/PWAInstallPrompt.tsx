@@ -3,19 +3,18 @@ import { Download, X, Smartphone, CheckCircle2 } from 'lucide-react';
 
 const PWAInstallPrompt: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone;
+    return !isStandalone && !localStorage.getItem('pwa-prompt-dismissed');
+  });
   const [isInstalled, setIsInstalled] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isIOS] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+  });
 
   useEffect(() => {
-    // Check if user has already dismissed the prompt
-    const isDismissed = localStorage.getItem('pwa-prompt-dismissed');
-    if (isDismissed) return;
-
-    // Check if it's iOS
-    const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
-    setIsIOS(isIOSDevice);
-
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -30,11 +29,8 @@ const PWAInstallPrompt: React.FC = () => {
       setTimeout(() => setIsInstalled(false), 5000);
     });
 
-    // Check if already in standalone mode
-    if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
-      setIsVisible(false);
-    } else if (isIOSDevice) {
-      // For iOS, we can show the prompt after a short delay
+    // For iOS, we can show the prompt after a short delay if not already dismissed/standalone
+    if (isIOS && isVisible) {
       const timer = setTimeout(() => setIsVisible(true), 3000);
       return () => clearTimeout(timer);
     }
@@ -42,7 +38,7 @@ const PWAInstallPrompt: React.FC = () => {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
-  }, []);
+  }, [isIOS, isVisible]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -89,7 +85,7 @@ const PWAInstallPrompt: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xl font-black text-gray-900 leading-tight">অ্যাপ হিসেবে ব্যবহার করুন</h4>
-              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Install as App / APK</p>
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Install as App</p>
             </div>
           </div>
 

@@ -14,7 +14,7 @@ const LandServices: React.FC<LandServicesProps> = ({ onBack }) => {
   const [expandedTutorialId, setExpandedTutorialId] = useState<string | null>(null);
 
   const shareUrl = window.location.href;
-  const shareTitle = "আমাদের মহেশপুর - ডিজিটাল ভূমি সেবা পোর্টাল";
+  const shareTitle = "Our Mahespur - ডিজিটাল ভূমি সেবা পোর্টাল";
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareUrl);

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { getPortalData, updatePortalData, getComplaints, deleteComplaint, updateComplaint, updateAdminPassword } from '../lib/store';
+import { getPortalData, updatePortalData, getComplaints, deleteComplaint, updateAdminPassword } from '../lib/store';
 import { 
   Settings, Plus, Edit2, Trash2, Save, X, Phone, MapPin, 
-  User, Mail, FileText, Calendar, MessageSquareText, Send, Loader2, 
-  ShieldCheck, Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
-  Database, ArrowLeft, Camera, Droplets, Pill, Landmark
+  User, Mail, FileText, Calendar, MessageSquareText, Loader2, 
+  Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
+  ArrowLeft, Camera, Droplets, Pill, Landmark
 } from 'lucide-react';
 import VideoPlayer from './VideoPlayer';
-import { GoogleGenAI } from "@google/genai";
 import { formatPhoneForDialer } from '../lib/utils';
 
 interface AdminPanelProps {
@@ -19,9 +18,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const [complaints, setComplaints] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('emergencyContacts');
   const [editingItem, setEditingItem] = useState<any>(null);
-  const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
-  const [replyText, setReplyText] = useState('');
-  const [isReplying, setIsReplying] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
@@ -67,27 +63,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     if (!confirm('আপনি কি নিশ্চিত যে এই অভিযোগটি ডিলিট করতে চান?')) return;
     await deleteComplaint(id);
     setComplaints(await getComplaints());
-  };
-
-  const handleSendReply = async () => {
-    if (!replyText.trim() || !selectedComplaint) return;
-    setIsReplying(true);
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: `A citizen named ${selectedComplaint.name} made a complaint about "${selectedComplaint.subject}". Admin's brief note for reply: "${replyText}". Write a professional reply in Bengali.`,
-      });
-      const professionalReply = response.text || replyText;
-      const updated = await updateComplaint(selectedComplaint.id, { reply: professionalReply, repliedAt: new Date().toLocaleString('bn-BD'), status: 'Resolved' });
-      if (updated) {
-        setReplyText('');
-        setSelectedComplaint(null);
-        setComplaints(await getComplaints());
-      }
-    } catch (error) {
-      alert("উত্তর পাঠাতে সমস্যা হয়েছে।");
-    } finally { setIsReplying(false); }
   };
 
   const startEdit = (item: any) => setEditingItem({ ...item });
@@ -215,7 +190,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                         <div className="flex items-center gap-2 text-sm"><Mail className="w-4 h-4 text-gray-400" />{c.email}</div>
                       </div>
                     </div>
-                    <div className="flex md:flex-col justify-end gap-2"><button onClick={() => setSelectedComplaint(c)} className="p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all flex items-center gap-2 text-sm font-bold"><MessageSquareText className="w-4 h-4" /> উত্তর দিন</button><button onClick={() => handleDeleteComplaint(c.id)} className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all"><Trash2 className="w-4 h-4" /></button></div>
+                    <div className="flex md:flex-col justify-end gap-2"><button onClick={() => handleDeleteComplaint(c.id)} className="p-2.5 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all"><Trash2 className="w-4 h-4" /></button></div>
                   </div>
                 </div>
               ))

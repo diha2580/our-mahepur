@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { MapPin, Info, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, PlayCircle, Film, Image as ImageIcon, Search, Trash2, ShieldCheck } from 'lucide-react';
+import { MapPin, ArrowRight, ArrowLeft, Plus, X, Camera, Video, Upload, Loader2, Film, Image as ImageIcon, Search, Trash2, ShieldCheck } from 'lucide-react';
 import VideoPlayer from '../components/VideoPlayer';
 
 interface TouristPlacesProps {
@@ -28,6 +28,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
   }, [spots, searchQuery]);
 
   const handleDelete = (id: string) => {
+    if (user?.role !== 'admin') return;
     if (window.confirm('আপনি কি নিশ্চিত যে এই পর্যটন কেন্দ্রটি ডিলিট করতে চান?')) {
       onUpdate(spots.filter(s => String(s.id) !== String(id)));
     }
@@ -76,7 +77,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
     }
 
     const newSpot = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: formData.name,
       location: formData.location,
       description: formData.description,
@@ -217,7 +218,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <div className="w-9 h-9 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}`} className="w-full h-full object-cover" alt="Avatar" />
                    </div>
                    <div className="flex flex-col">
                       <span className="text-[10px] text-gray-400 font-bold uppercase leading-none mb-1">অবদানকারী</span>
@@ -437,7 +438,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   <div className="flex items-center gap-5">
                     <div className="relative">
                        <div className="w-20 h-20 rounded-3xl bg-white border-2 border-gray-100 flex items-center justify-center text-orange-600 overflow-hidden shadow-xl">
-                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}` || undefined} className="w-full h-full object-cover" alt="Avatar" />
+                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}`} className="w-full h-full object-cover" alt="Avatar" />
                        </div>
                        <div className="absolute -bottom-2 -right-2 bg-green-500 p-1.5 rounded-xl border-4 border-white shadow-lg">
                           <ShieldCheck className="w-4 h-4 text-white" />
