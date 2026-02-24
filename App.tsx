@@ -19,6 +19,7 @@ import Profile from './pages/Profile';
 import DeveloperModal from './components/DeveloperModal';
 import AccessibilityToolbar from './components/AccessibilityToolbar';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import LoadingSkeleton from './components/LoadingSkeleton';
 import { WifiOff, ShieldAlert, RefreshCcw } from 'lucide-react';
 import { syncDataToCache } from './lib/cache';
 import { initStorage, getCurrentUser, logoutUser, getPortalData, updatePortalData, subscribeToData } from './lib/store';
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [user, setUser] = useState<any>(null);
   const [portalData, setPortalData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isSyncing, setIsSyncing] = useState(false);
   const [showDevModal, setShowDevModal] = useState(false);
   const [fontSize, setFontSize] = useState<'sm' | 'md' | 'lg' | 'xl'>(() => (localStorage.getItem('fontSize') as any) || 'md');
@@ -83,12 +85,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const setup = async () => {
-      await initStorage();
-      setUser(getCurrentUser());
-      
-      // Initial data load
-      const initialData = getPortalData();
-      setPortalData(initialData);
+      setIsLoading(true);
+      try {
+        await initStorage();
+        setUser(getCurrentUser());
+        
+        // Initial data load
+        const initialData = getPortalData();
+        setPortalData(initialData);
+      } finally {
+        // Add a slight delay for a smoother transition
+        setTimeout(() => setIsLoading(false), 800);
+      }
     };
 
     setup();
@@ -157,7 +165,9 @@ const App: React.FC = () => {
   const handleBack = () => setActivePage('home');
 
   const renderPage = () => {
-    if (!portalData) return null;
+    if (isLoading || !portalData) {
+      return <LoadingSkeleton />;
+    }
 
     if (activePage === 'login' || activePage === 'signup') {
       return (
