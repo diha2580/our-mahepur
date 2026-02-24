@@ -182,6 +182,50 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
             <div className="text-[10px] md:text-xs text-gray-900 font-black uppercase tracking-widest opacity-60">অনলাইন সহায়তা</div>
          </div>
       </section>
+
+      {/* App Installation Guide */}
+      <section className="bg-gradient-to-br from-green-50 to-white p-8 md:p-16 rounded-[3rem] border border-green-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-10 opacity-5">
+          <PhoneCall className="w-64 h-64 -rotate-12" />
+        </div>
+        
+        <div className="relative z-10 max-w-3xl">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-1 w-12 bg-green-600 rounded-full"></div>
+            <span className="text-[10px] font-black text-green-600 uppercase tracking-[0.3em]">App Installation Guide</span>
+          </div>
+          
+          <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-8 leading-tight">
+            অ্যাপ হিসেবে <span className="text-green-600">ব্যবহার করুন</span>
+          </h2>
+          
+          <p className="text-lg text-gray-600 font-medium mb-10 leading-relaxed">
+            এই পোর্টালটি একটি <span className="font-bold text-gray-900">PWA (Progressive Web App)</span>। এটি কোনো আলাদা APK ছাড়াই সরাসরি আপনার মোবাইলে অ্যাপ হিসেবে ইনস্টল করা সম্ভব। এটি ফোনের মেমোরি কম খরচ করে এবং অফলাইনেও কাজ করে।
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+              <h4 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                অ্যান্ড্রয়েড ইউজার
+              </h4>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                ক্রোম ব্রাউজারে সাইটটি ওপেন করে উপরে ডানদিকের থ্রি-ডট মেনুতে ক্লিক করুন। এরপর <span className="font-bold text-gray-900">"Install App"</span> অথবা <span className="font-bold text-gray-900">"Add to Home Screen"</span> সিলেক্ট করুন।
+              </p>
+            </div>
+            
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+              <h4 className="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                আইফোন ইউজার
+              </h4>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">
+                সাফারি ব্রাউজারে সাইটটি ওপেন করে নিচের <span className="font-bold text-gray-900">Share</span> বাটনে ক্লিক করুন। এরপর স্ক্রল করে নিচে গিয়ে <span className="font-bold text-gray-900">"Add to Home Screen"</span> সিলেক্ট করুন।
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -89,7 +89,7 @@ const PWAInstallPrompt: React.FC = () => {
             </div>
             <div>
               <h4 className="text-xl font-black text-gray-900 leading-tight">অ্যাপ হিসেবে ব্যবহার করুন</h4>
-              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Install Digital Portal</p>
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest mt-1">Install as App / APK</p>
             </div>
           </div>
 
