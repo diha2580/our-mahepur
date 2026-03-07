@@ -36,6 +36,35 @@ const App: React.FC = () => {
   const [isHighContrast, setIsHighContrast] = useState(() => localStorage.getItem('highContrast') === 'true');
 
   useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (event.state && event.state.page) {
+        setActivePage(event.state.page);
+      } else {
+        setActivePage('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    
+    // Set initial state if not already set
+    if (!window.history.state) {
+      window.history.replaceState({ page: 'home' }, '');
+    } else if (window.history.state.page) {
+      setActivePage(window.history.state.page);
+    }
+
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleNavigate = (page: string) => {
+    if (page !== activePage) {
+      window.history.pushState({ page }, '');
+      setActivePage(page);
+      window.scrollTo(0, 0);
+    }
+  };
+
+  useEffect(() => {
     localStorage.setItem('fontSize', fontSize);
   }, [fontSize]);
 
@@ -150,7 +179,7 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     await logoutUser();
     setUser(null);
-    setActivePage('home');
+    handleNavigate('home');
   };
 
   const handleUserUpdate = (updatedUser: any) => {
@@ -162,7 +191,7 @@ const App: React.FC = () => {
     await updatePortalData(newData);
   };
 
-  const handleBack = () => setActivePage('home');
+  const handleBack = () => handleNavigate('home');
 
   const renderPage = () => {
     if (isLoading || !portalData) {
@@ -174,8 +203,8 @@ const App: React.FC = () => {
         <div className="py-10">
           <Auth 
             mode={activePage as any} 
-            onSuccess={(u) => {setUser(u); setActivePage('home');}} 
-            onSwitch={() => setActivePage(activePage === 'login' ? 'signup' : 'login')} 
+            onSuccess={(u) => {setUser(u); handleNavigate('home');}} 
+            onSwitch={() => handleNavigate(activePage === 'login' ? 'signup' : 'login')} 
             onBack={handleBack}
           />
         </div>
@@ -184,7 +213,7 @@ const App: React.FC = () => {
 
     if (activePage === 'profile') {
       if (!user) {
-        setActivePage('login');
+        handleNavigate('login');
         return null;
       }
       return <Profile user={user} onUpdate={handleUserUpdate} onLogout={handleLogout} onBack={handleBack} />;
@@ -197,7 +226,7 @@ const App: React.FC = () => {
             <div className="bg-red-100 p-6 rounded-full text-red-600"><ShieldAlert className="w-16 h-16" /></div>
             <h2 className="text-3xl font-bold">অনুমতি নেই</h2>
             <p className="text-gray-500">এই পৃষ্ঠাটি শুধুমাত্র অ্যাডমিনদের জন্য সংরক্ষিত।</p>
-            <button onClick={() => setActivePage('home')} className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold">হোমে ফিরুন</button>
+            <button onClick={() => handleNavigate('home')} className="bg-green-600 text-white px-8 py-3 rounded-xl font-bold">হোমে ফিরুন</button>
           </div>
         );
       }
@@ -205,7 +234,7 @@ const App: React.FC = () => {
     }
 
     switch (activePage) {
-      case 'home': return <Home onNavigate={setActivePage} />;
+      case 'home': return <Home onNavigate={handleNavigate} />;
       case 'history': return <History data={portalData.historyData} onBack={handleBack} />;
       case 'emergency': return (
         <Emergency 
@@ -253,7 +282,7 @@ const App: React.FC = () => {
       );
       case 'eapps': return <EApplications onBack={handleBack} />;
       case 'contact': return <Contact contactInfo={portalData.contactInfo} onBack={handleBack} />;
-      default: return <Home onNavigate={setActivePage} />;
+      default: return <Home onNavigate={handleNavigate} />;
     }
   };
 
@@ -274,7 +303,7 @@ const App: React.FC = () => {
       )}
 
       <Navbar 
-        onNavigate={setActivePage} 
+        onNavigate={handleNavigate} 
         activePage={activePage} 
         isOnline={isOnline} 
         user={user} 
