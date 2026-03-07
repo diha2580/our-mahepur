@@ -10,7 +10,7 @@ const DeveloperModal: React.FC<DeveloperModalProps> = ({ onClose }) => {
 
   // Using a direct high-quality anonymous professional man portrait
   const profileImageUrl = "https://i.postimg.cc/vmwM1hkW/IMG-20260131-WA0002-jpg.jpg";
-  const fallbackAvatar = "https://api.dicebearom/7.x/avataaars/svg?seed=Nahian&backgroundColor=b6e3f4";
+  const fallbackAvatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=Nahian&backgroundColor=b6e3f4";
 
   return (
     <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-[300] flex items-center justify-center p-4">
@@ -52,6 +52,7 @@ const DeveloperModal: React.FC<DeveloperModalProps> = ({ onClose }) => {
                   onError={() => setImgError(true)}
                   className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-110" 
                   alt="Nahian Nafiz" 
+                  referrerPolicy="no-referrer"
                 />
               </div>
               <div className="absolute -bottom-1 -right-1 bg-blue-600 p-1 rounded-md shadow-lg border-2 border-white" title="Verified Expert">

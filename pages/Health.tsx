@@ -405,7 +405,7 @@ const Health: React.FC<HealthProps> = ({ facilities, pharmacies, onBack }) => {
                   <div className="flex items-center gap-5 mb-6">
                     <div className="relative">
                       <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center text-green-600 border-2 border-white shadow-xl overflow-hidden group-hover:scale-110 transition-transform duration-500">
-                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}`} className="w-full h-full object-cover" alt={doctor.name} />
+                         <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor.id}`} className="w-full h-full object-cover" alt={doctor.name} referrerPolicy="no-referrer" />
                       </div>
                       <div className="absolute -bottom-2 -right-2 bg-blue-600 p-1.5 rounded-lg border-2 border-white shadow-lg">
                         <ShieldCheck className="w-3 h-3 text-white" />
@@ -482,6 +482,7 @@ const Health: React.FC<HealthProps> = ({ facilities, pharmacies, onBack }) => {
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedDoctor.id}`} 
                     className="w-full h-full rounded-[2.6rem] object-cover bg-green-50" 
                     alt={selectedDoctor.name} 
+                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <div>

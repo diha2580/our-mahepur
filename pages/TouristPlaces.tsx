@@ -197,6 +197,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   src={spot.image || undefined} 
                   alt={spot.name} 
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                  referrerPolicy="no-referrer"
                 />
               )}
               <div className="absolute top-4 left-4">
@@ -218,7 +219,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
               <div className="mt-auto pt-6 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                    <div className="w-9 h-9 rounded-full bg-orange-100 border-2 border-white flex items-center justify-center text-orange-600 overflow-hidden shadow-sm">
-                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}`} className="w-full h-full object-cover" alt="Avatar" />
+                      <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${spot.contributor || spot.id}`} className="w-full h-full object-cover" alt="Avatar" referrerPolicy="no-referrer" />
                    </div>
                    <div className="flex flex-col">
                       <span className="text-[10px] text-gray-400 font-bold uppercase leading-none mb-1">অবদানকারী</span>
@@ -332,7 +333,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                       {preview.type === 'video' ? (
                         <VideoPlayer src={preview.url || ''} className="w-full max-h-[300px]" autoPlay />
                       ) : (
-                        <img src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" alt="Preview" />
+                        <img src={preview.url || undefined} className="w-full max-h-[300px] object-contain rounded-[1.5rem] shadow-2xl" alt="Preview" referrerPolicy="no-referrer" />
                       )}
                       <div className="absolute top-6 right-6 flex gap-2 z-10">
                          <div className="bg-black/70 backdrop-blur px-3 py-1.5 rounded-xl text-[10px] font-black text-white flex items-center gap-1">
@@ -397,7 +398,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
               {selectedSpot.mediaType === 'video' ? (
                 <VideoPlayer src={selectedSpot.image || ''} className="w-full h-full" autoPlay />
               ) : (
-                <img src={selectedSpot.image || undefined} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={selectedSpot.name} />
+                <img src={selectedSpot.image || undefined} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={selectedSpot.name} referrerPolicy="no-referrer" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
               <div className="absolute bottom-8 left-8 flex items-center gap-3 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
@@ -438,7 +439,7 @@ const TouristPlaces: React.FC<TouristPlacesProps> = ({ spots, user, onUpdate, on
                   <div className="flex items-center gap-5">
                     <div className="relative">
                        <div className="w-20 h-20 rounded-3xl bg-white border-2 border-gray-100 flex items-center justify-center text-orange-600 overflow-hidden shadow-xl">
-                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}`} className="w-full h-full object-cover" alt="Avatar" />
+                          <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedSpot.contributor || selectedSpot.id}`} className="w-full h-full object-cover" alt="Avatar" referrerPolicy="no-referrer" />
                        </div>
                        <div className="absolute -bottom-2 -right-2 bg-green-500 p-1.5 rounded-xl border-4 border-white shadow-lg">
                           <ShieldCheck className="w-4 h-4 text-white" />

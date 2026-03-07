@@ -1,4 +1,4 @@
-import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications, educationData, landServicesData, historyData, initialNavItems, contactInfo, bloodDonors, pharmacies } from '../data';
+import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, educationData, landServicesData, historyData, initialNavItems, contactInfo, bloodDonors, pharmacies, unionData } from '../data';
 import { supabase, isSupabaseConfigured } from './supabase';
 
 const DATA_KEY = 'portal_app_data_v1';
@@ -42,19 +42,19 @@ export const initStorage = async () => {
     console.info("Supabase not configured, using local/initial data");
     if (!localStorage.getItem(DATA_KEY)) {
       const initialData = {
-        appIcon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/512x512.png',
+        appIcon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png',
         emergencyContacts,
         districtOfficials,
         healthFacilities,
         touristSpots,
-        eApplications,
         educationData,
         historyData,
         landServices: landServicesData,
         navItems: initialNavItems,
         contactInfo,
         bloodDonors,
-        pharmacies
+        pharmacies,
+        unionData
       };
       localStorage.setItem(DATA_KEY, JSON.stringify(initialData));
     }
@@ -75,19 +75,19 @@ export const initStorage = async () => {
       console.error("Supabase fetch failed, using local/initial data", e);
       if (!localStorage.getItem(DATA_KEY)) {
         const initialData = {
-          appIcon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/512x512.png',
+          appIcon: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png',
           emergencyContacts,
           districtOfficials,
           healthFacilities,
           touristSpots,
-          eApplications,
           educationData,
           historyData,
           landServices: landServicesData,
           navItems: initialNavItems,
           contactInfo,
           bloodDonors,
-          pharmacies
+          pharmacies,
+          unionData
         };
         localStorage.setItem(DATA_KEY, JSON.stringify(initialData));
       }

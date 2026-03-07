@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getPortalData, updatePortalData, getComplaints, deleteComplaint, updateAdminPassword } from '../lib/store';
 import { 
   Settings, Plus, Edit2, Trash2, Save, X, Phone, MapPin, 
-  User, Mail, FileText, Calendar, MessageSquareText, Loader2, 
+  User, Mail, Calendar, MessageSquareText, Loader2, 
   Layout, HeartPulse, GraduationCap, Eye, EyeOff, Lock, 
   ArrowLeft, Camera, Droplets, Pill, Landmark
 } from 'lucide-react';
@@ -68,7 +68,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
   const startEdit = (item: any) => setEditingItem({ ...item });
   const getInitialItem = (tab: string) => {
     switch (tab) {
-      case 'eApplications': return { id: Date.now().toString(), title: '', link: '' };
       case 'districtOfficials': return { id: Date.now().toString(), name: '', designation: '', office: '', phone: '', email: '' };
       case 'healthFacilities': return { id: Date.now().toString(), name: '', type: 'Government', location: '', phone: '', speciality: [], doctors: [] };
       case 'touristSpots': return { id: Date.now().toString(), name: '', description: '', image: '', location: '' };
@@ -77,6 +76,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
       case 'bloodDonors': return { id: Date.now().toString(), name: '', bloodGroup: 'O+', phone: '', location: '', lastDonationDate: new Date().toISOString().split('T')[0], isAvailable: true };
       case 'pharmacies': return { id: Date.now().toString(), name: '', location: '', phone: '', isOpen24Hours: false, deliveryAvailable: false };
       case 'landServices': return { id: Date.now().toString(), title: '', link: '', desc: '' };
+      case 'unionData': return { id: Date.now().toString(), name: '', chairman: '', phone: '', location: '', website: '' };
       default: return { id: Date.now().toString(), name: '', phone: '', location: '', type: 'Fire' };
     }
   };
@@ -102,7 +102,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
     { id: 'bloodDonors', label: 'রক্তদান', icon: Droplets },
     { id: 'pharmacies', label: 'ফার্মেসি', icon: Pill },
     { id: 'landServices', label: 'ভূমি সেবা', icon: Landmark },
-    { id: 'eApplications', label: 'ই-আবেদন', icon: FileText },
+    { id: 'unionData', label: 'ইউনিয়ন পরিষদ', icon: Landmark },
     { id: 'navItems', label: 'মেনু বার', icon: Layout },
     { id: 'contactInfo', label: 'যোগাযোগ তথ্য', icon: Phone },
     { id: 'complaints', label: 'অভিযোগ', icon: MessageSquareText },
@@ -344,7 +344,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                         {editingItem.mediaType === 'video' ? (
                           <VideoPlayer src={editingItem.image || ''} className="w-full h-full" />
                         ) : (
-                          <img src={editingItem.image || undefined} className="w-full h-full object-cover" alt="Preview" />
+                          <img src={editingItem.image || undefined} className="w-full h-full object-cover" alt="Preview" referrerPolicy="no-referrer" />
                         )}
                         <button 
                           onClick={() => setEditingItem({...editingItem, image: ''})}
@@ -405,10 +405,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ onBack }) => {
                   <textarea placeholder="সংক্ষিপ্ত বর্ণনা" className="w-full p-3 border rounded-xl" rows={3} value={editingItem.desc} onChange={e => setEditingItem({...editingItem, desc: e.target.value})} />
                 </div>
               )}
-              {activeTab === 'eApplications' && (
+              {activeTab === 'unionData' && (
                 <div className="space-y-4">
-                  <input placeholder="শিরোনাম" className="w-full p-3 border rounded-xl" value={editingItem.title} onChange={e => setEditingItem({...editingItem, title: e.target.value})} />
-                  <input placeholder="লিঙ্ক" className="w-full p-3 border rounded-xl" value={editingItem.link} onChange={e => setEditingItem({...editingItem, link: e.target.value})} />
+                  <input placeholder="ইউনিয়নের নাম" className="w-full p-3 border rounded-xl" value={editingItem.name} onChange={e => setEditingItem({...editingItem, name: e.target.value})} />
+                  <input placeholder="চেয়ারম্যানের নাম" className="w-full p-3 border rounded-xl" value={editingItem.chairman} onChange={e => setEditingItem({...editingItem, chairman: e.target.value})} />
+                  <input placeholder="ফোন" className="w-full p-3 border rounded-xl" value={editingItem.phone} onChange={e => setEditingItem({...editingItem, phone: e.target.value})} />
+                  <input placeholder="অবস্থান" className="w-full p-3 border rounded-xl" value={editingItem.location} onChange={e => setEditingItem({...editingItem, location: e.target.value})} />
+                  <input placeholder="ওয়েবসাইট (ঐচ্ছিক)" className="w-full p-3 border rounded-xl" value={editingItem.website} onChange={e => setEditingItem({...editingItem, website: e.target.value})} />
                 </div>
               )}
             </div>

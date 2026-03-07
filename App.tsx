@@ -9,10 +9,10 @@ import TouristPlaces from './pages/TouristPlaces';
 import Education from './pages/Education';
 import ComplaintBox from './pages/ComplaintBox';
 import BloodDonation from './pages/BloodDonation';
-import EApplications from './pages/EApplications';
 import LandServices from './pages/LandServices';
 import History from './pages/History';
 import Contact from './pages/Contact';
+import UnionPorisod from './pages/UnionPorisod';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
@@ -280,7 +280,7 @@ const App: React.FC = () => {
           onBack={handleBack} 
         />
       );
-      case 'eapps': return <EApplications onBack={handleBack} />;
+      case 'union': return <UnionPorisod data={portalData.unionData || []} onBack={handleBack} />;
       case 'contact': return <Contact contactInfo={portalData.contactInfo} onBack={handleBack} />;
       default: return <Home onNavigate={handleNavigate} />;
     }

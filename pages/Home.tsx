@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, FileText, GraduationCap, ArrowRight, Map, BookOpen, Droplets } from 'lucide-react';
+import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, GraduationCap, ArrowRight, Map, BookOpen, Droplets, Landmark } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -78,11 +78,11 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       desc: 'আমাদের সাথে সরাসরি যোগাযোগ করুন' 
     },
     { 
-      id: 'eapps', 
-      label: 'ই-আবেদন', 
-      icon: FileText, 
+      id: 'union', 
+      label: 'ইউনিয়ন পরিষদ', 
+      icon: Landmark, 
       theme: 'teal',
-      desc: 'অনলাইন ফরম ও সার্টিফিকেটের লিংক' 
+      desc: 'উপজেলার সকল ইউনিয়ন পরিষদের তথ্য' 
     },
   ];
 
@@ -107,7 +107,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
     <div className="space-y-12 animate-in fade-in duration-700">
       {/* Hero Section */}
       <section className="relative rounded-[2.5rem] overflow-hidden min-h-[400px] flex items-center bg-gray-900 text-white shadow-2xl">
-        <div className="absolute inset-0 opacity-20 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1024px-Government_Seal_of_Bangladesh.svg.png')] bg-contain bg-no-repeat bg-center mix-blend-overlay"></div>
+        <div className="absolute inset-0 opacity-20 bg-[url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Government_Seal_of_Bangladesh.svg/1200px-Government_Seal_of_Bangladesh.svg.png')] bg-contain bg-no-repeat bg-center mix-blend-overlay"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-green-900 via-green-900/80 to-transparent"></div>
         
         <div className="relative z-10 w-full max-w-4xl px-8 md:px-16 py-12">
@@ -128,6 +128,9 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
           <div className="flex flex-col sm:flex-row gap-4">
              <button onClick={() => onNavigate('emergency')} className="flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-red-600/20 active:scale-95">
                 <PhoneCall className="w-5 h-5" /> জরুরি কল করুন
+             </button>
+             <button onClick={() => onNavigate('union')} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-green-600/20 active:scale-95">
+                <Landmark className="w-5 h-5" /> ইউনিয়ন পরিষদ
              </button>
           </div>
         </div>

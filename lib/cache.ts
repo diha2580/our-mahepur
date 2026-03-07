@@ -1,5 +1,5 @@
 
-import { emergencyContacts, districtOfficials, healthFacilities, touristSpots, eApplications } from '../data';
+import { emergencyContacts, districtOfficials, healthFacilities, touristSpots } from '../data';
 
 const CACHE_KEY = 'district_portal_cache_v1';
 
@@ -9,7 +9,6 @@ export const syncDataToCache = () => {
     districtOfficials,
     healthFacilities,
     touristSpots,
-    eApplications,
     lastSynced: new Date().toISOString()
   };
   localStorage.setItem(CACHE_KEY, JSON.stringify(dataToCache));

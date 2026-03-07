@@ -84,3 +84,12 @@ export interface Complaint {
   status: 'Pending' | 'Reviewing' | 'Resolved';
   date: string;
 }
+
+export interface UnionDetail {
+  id: string;
+  name: string;
+  chairman: string;
+  phone: string;
+  location: string;
+  website?: string;
+}

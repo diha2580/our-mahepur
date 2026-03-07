@@ -28,6 +28,7 @@ const History: React.FC<HistoryProps> = ({ data, onBack }) => {
           src="https://images.unsplash.com/photo-1590050752117-23a9d7f668ad?auto=format&fit=crop&q=80&w=1200" 
           alt="Historical Moheshpur" 
           className="w-full h-[400px] object-cover"
+          referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center p-8">
            <div className="bg-green-500/20 backdrop-blur-md p-4 rounded-full border border-white/20 mb-6">

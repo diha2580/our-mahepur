@@ -12,7 +12,7 @@ export const initialNavItems = [
   { id: 'blood', label: 'রক্তদান', icon: 'Droplets' },
   { id: 'complaint', label: 'অভিযোগ', icon: 'MessageSquare' },
   { id: 'contact', label: 'যোগাযোগ', icon: 'PhoneCall' },
-  { id: 'eapps', label: 'ই-আবেদন', icon: 'FileText' },
+  { id: 'union', label: 'ইউনিয়ন পরিষদ', icon: 'Landmark' },
 ];
 
 export const historyData = {
@@ -109,13 +109,6 @@ export const educationData = [
   { id: '4', name: 'মহেশপুর সরকারি ডিগ্রি কলেজ', type: 'College', location: 'মহেশপুর পৌরসভা, মহেশপুর, ঝিনাইদহ', phone: '০১৩০৯-১১৬৭৫২' }
 ];
 
-export const eApplications = [
-  { id: '1', title: 'নাগরিক সনদ আবেদন', link: 'https://eprottoyon.com/' },
-  { id: '2', title: 'ট্রেড লাইসেন্স আবেদন', link: 'https://www.etradelicense.gov.bd/' },
-  { id: '3', title: 'ওয়ারিশ সনদ আবেদন', link: 'https://lgoms.org/ci_apply.php' },
-  { id: '4', title: 'নতুন বিদ্যুৎ সংযোগ', link: 'https://newconnection.bpdb.gov.bd/' }
-];
-
 export const landServicesData = [
   { id: '1', title: 'ই-নামজারি আবেদন (Mutation)', link: 'https://mutation.land.gov.bd/', desc: 'জমির মালিকানা পরিবর্তনের আবেদন' },
   { id: '2', title: 'ভূমি উন্নয়ন কর (Tax)', link: 'https://ldtax.gov.bd/', desc: 'অনলাইনে খাজনা বা ভূমি কর প্রদান' },
@@ -123,6 +116,7 @@ export const landServicesData = [
   { id: '4', title: 'মৌজা ম্যাপ (Maps)', link: 'https://eporcha.gov.bd/user/map-search', desc: 'অনলাইনে মৌজা ম্যাপ দেখা ও আবেদন' },
   { id: '5', title: 'উত্তরাধিকার ক্যালকুলেটর', link: 'http://inheritance.gov.bd/', desc: 'সম্পদ বন্টন বা মিরাস ক্যালকুলেটর' }
 ];
+
 
 export const contactInfo = {
   address: 'উপজেলা পরিষদ কমপ্লেক্স, মহেশপুর, ঝিনাইদহ',
@@ -137,3 +131,10 @@ export const bloodDonors: BloodDonor[] = [
   { id: '3', name: 'সাদিয়া ইসলাম', bloodGroup: 'B+', phone: '০১৯১১-৩৩৪৪৫৫', location: 'পৌর এলাকা', lastDonationDate: '২০২৪-০১-১০', isAvailable: false },
   { id: '4', name: 'নাহিদ হাসান', bloodGroup: 'AB+', phone: '০১৬৭৮-৯৯৮৮৭৭', location: 'ভৈরব', lastDonationDate: '২০২৩-০৯-২০', isAvailable: true }
 ];
+
+export const unionData = [
+  { id: '1', name: 'মহেশপুর ইউনিয়ন', chairman: 'মোঃ আব্দুল হাই', phone: '০১৭০০-১১২২৩৩', location: 'মহেশপুর সদর', website: 'http://moheshpurunion.gov.bd' },
+  { id: '2', name: 'খালিশপুর ইউনিয়ন', chairman: 'মোঃ নজরুল ইসলাম', phone: '০১৮৯৯-২২৩৩৪৪', location: 'খালিশপুর বাজার', website: 'http://khalishpurunion.gov.bd' },
+  { id: '3', name: 'ভৈরব ইউনিয়ন', chairman: 'মোঃ শাহজাহান আলী', phone: '০১৯১১-৩৩৪৪৫৫', location: 'ভৈরব বাজার', website: 'http://bhairabunion.gov.bd' }
+];
+
