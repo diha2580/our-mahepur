@@ -1,5 +1,5 @@
 import React from 'react';
-import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, GraduationCap, ArrowRight, Map, BookOpen, Droplets, Landmark } from 'lucide-react';
+import { PhoneCall, HeartPulse, Building2, MapPin, MessageSquare, GraduationCap, ArrowRight, Map, BookOpen, Droplets, Landmark, Newspaper } from 'lucide-react';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -64,6 +64,13 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       desc: 'জরুরি প্রয়োজনে রক্তদাতার সন্ধান করুন' 
     },
     { 
+      id: 'news', 
+      label: 'সর্বশেষ সংবাদ', 
+      icon: Newspaper, 
+      theme: 'lime',
+      desc: 'মহেশপুর ও বাংলাদেশের সাম্প্রতিক খবর' 
+    },
+    { 
       id: 'complaint', 
       label: 'অভিযোগ বক্স', 
       icon: MessageSquare, 
@@ -96,6 +103,7 @@ const Home: React.FC<HomeProps> = ({ onNavigate }) => {
       case 'violet': return { bg: 'bg-violet-50', icon: 'bg-violet-600', text: 'text-violet-700', border: 'border-violet-100', shadow: 'shadow-violet-100/50', hover: 'hover:border-violet-300' };
       case 'orange': return { bg: 'bg-orange-50', icon: 'bg-orange-600', text: 'text-orange-700', border: 'border-orange-100', shadow: 'shadow-orange-100/50', hover: 'hover:border-orange-300' };
       case 'rose': return { bg: 'bg-rose-50', icon: 'bg-rose-600', text: 'text-rose-700', border: 'border-rose-100', shadow: 'shadow-rose-100/50', hover: 'hover:border-rose-300' };
+      case 'lime': return { bg: 'bg-lime-50', icon: 'bg-lime-600', text: 'text-lime-700', border: 'border-lime-100', shadow: 'shadow-lime-100/50', hover: 'hover:border-lime-300' };
       case 'purple': return { bg: 'bg-purple-50', icon: 'bg-purple-600', text: 'text-purple-700', border: 'border-purple-100', shadow: 'shadow-purple-100/50', hover: 'hover:border-purple-300' };
       case 'sky': return { bg: 'bg-sky-50', icon: 'bg-sky-600', text: 'text-sky-700', border: 'border-sky-100', shadow: 'shadow-sky-100/50', hover: 'hover:border-sky-300' };
       case 'teal': return { bg: 'bg-teal-50', icon: 'bg-teal-600', text: 'text-teal-700', border: 'border-teal-100', shadow: 'shadow-teal-100/50', hover: 'hover:border-teal-300' };

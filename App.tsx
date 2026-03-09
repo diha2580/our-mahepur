@@ -13,6 +13,7 @@ import LandServices from './pages/LandServices';
 import History from './pages/History';
 import Contact from './pages/Contact';
 import UnionPorisod from './pages/UnionPorisod';
+import NewsPage from './pages/NewsPage';
 import AdminPanel from './components/AdminPanel';
 import Auth from './components/Auth';
 import Profile from './pages/Profile';
@@ -281,6 +282,7 @@ const App: React.FC = () => {
         />
       );
       case 'union': return <UnionPorisod data={portalData.unionData || []} onBack={handleBack} />;
+      case 'news': return <NewsPage onBack={handleBack} />;
       case 'contact': return <Contact contactInfo={portalData.contactInfo} onBack={handleBack} />;
       default: return <Home onNavigate={handleNavigate} />;
     }
